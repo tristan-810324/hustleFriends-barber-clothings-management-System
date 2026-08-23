@@ -2,7 +2,7 @@ import { ArrowUpRight, Coffee, Scissors, ShoppingBag } from 'lucide-react';
 
 export const Hero = () => {
   return (
-    <section className="relative w-full h-auto lg:min-h-screen bg-neutral-950 text-white flex flex-col justify-between pt-28 sm:pt-32 md:pt-32 lg:pt-36 pb-4 lg:pb-6 px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
+    <section id="home" className="relative w-full h-auto lg:min-h-screen bg-neutral-950 text-white flex flex-col justify-between pt-28 sm:pt-32 md:pt-32 lg:pt-36 pb-4 lg:pb-6 px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
       
       {/* Background Image Layer with Vignette Gradient Overlay */}
       <div 
