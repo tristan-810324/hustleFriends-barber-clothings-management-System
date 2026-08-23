@@ -1,30 +1,29 @@
-import { MapPin, ArrowUpRight, Flame, Sparkles } from 'lucide-react';
+import { MapPin, ArrowUpRight } from 'lucide-react';
 
 export const Products = () => {
   return (
-    <section id="products" className="relative bg-white text-neutral-900 py-24 px-6 md:px-16 overflow-hidden">
+    <section id="products" className="relative bg-white text-neutral-900 py-12 md:py-20 px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
       
       {/* Background Subtle Watermark Text */}
-      <div className="absolute top-10 left-10 text-[180px] lg:text-[240px] font-black text-neutral-100 select-none pointer-events-none tracking-tighter leading-none z-0">
+      <div className="absolute top-4 left-4 md:top-8 md:left-8 text-[120px] sm:text-[180px] lg:text-[220px] font-black text-neutral-100 select-none pointer-events-none tracking-tighter leading-none z-0">
         WEAR
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10 space-y-12">
+      <div className="max-w-7xl mx-auto relative z-10 space-y-8 md:space-y-10">
         
         {/* Top Header Row */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-neutral-200">
-          <div className="space-y-3">
-            <span className="text-xs font-black tracking-[0.25em] text-[#C6A664] uppercase block">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-8 pb-6 border-b border-neutral-200">
+          <div className="space-y-2">
+            <span className="text-[11px] font-black tracking-[0.25em] text-[#C6A664] uppercase block">
               CONCEPT STORE
             </span>
-            <h2 className="text-5xl sm:text-7xl font-black uppercase tracking-tight leading-[0.95] text-neutral-950">
-              PHYSICAL<br />
-              <span className="italic font-serif font-normal text-neutral-800">EXCLUSIVE DROPS.</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[0.95] text-neutral-950">
+              PHYSICAL <span className="italic font-serif font-normal text-neutral-700">EXCLUSIVE DROPS.</span>
             </h2>
           </div>
 
-          <div className="space-y-2 max-w-sm">
-            <span className="inline-block px-3 py-1 rounded-md bg-neutral-100 border border-neutral-200 text-[10px] font-black tracking-widest text-neutral-700 uppercase">
+          <div className="space-y-1.5 max-w-sm">
+            <span className="inline-block px-2.5 py-1 rounded-md bg-neutral-100 border border-neutral-200 text-[9px] sm:text-[10px] font-black tracking-widest text-neutral-700 uppercase">
               WALK-IN EXCLUSIVE ONLY
             </span>
             <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed">
@@ -33,45 +32,42 @@ export const Products = () => {
           </div>
         </div>
 
-        {/* Collection Showcase Cards with Image Backgrounds */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Collection Showcase Cards - Fixed Tablet Responsiveness */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
           
           {/* Main Streetwear Collection Banner */}
-          <div className="relative h-[480px] sm:h-[520px] rounded-3xl overflow-hidden border border-neutral-200 shadow-xl group flex flex-col justify-between p-8 sm:p-10">
-            {/* Image & Overlay */}
+          <div className="relative min-h-105 md:min-h-120 lg:min-h-130 rounded-2xl sm:rounded-3xl overflow-hidden border border-neutral-200 shadow-lg hover:shadow-2xl group flex flex-col justify-between p-6 sm:p-8 transition-all duration-500">
+            {/* Image & High-Contrast Gradient Overlay */}
             <img
-              src="https://images.unsplash.com/photo-1523381210434-271e8be1f25b?q=80&w=1000&auto=format&fit=crop"
+              src="/img/Products.png"
               alt="Hustle Friends Streetwear Apparel"
               className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-neutral-950 via-neutral-950/70 to-neutral-950/20" />
 
-            {/* Top Badge */}
-            <div className="relative z-10 flex justify-between items-start">
-              <div className="p-3 bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl text-[#C6A664] shadow-md">
-                <Flame size={22} />
-              </div>
-              <span className="px-4 py-1.5 rounded-full bg-neutral-950/80 backdrop-blur-md border border-neutral-800 text-[10px] font-black text-white tracking-widest uppercase">
+            {/* Top Badge (Icon Removed) */}
+            <div className="relative z-10 flex justify-end items-center">
+              <span className="px-3.5 py-1.5 rounded-full bg-neutral-950/80 backdrop-blur-md border border-neutral-800 text-[9px] sm:text-[10px] font-black text-white tracking-widest uppercase shadow-md">
                 IN-STORE DROPS
               </span>
             </div>
 
             {/* Bottom Content */}
-            <div className="relative z-10 space-y-4">
-              <span className="text-[10px] font-black tracking-widest text-[#C6A664] uppercase block">
+            <div className="relative z-10 space-y-2 sm:space-y-3">
+              <span className="text-[10px] sm:text-xs font-black tracking-widest text-[#C6A664] uppercase block">
                 APPAREL & TEES
               </span>
-              <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-wide text-white leading-tight">
+              <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-wide text-white leading-tight">
                 HEAVYWEIGHT OVERSIZED COLLECTION
               </h3>
               <p className="text-neutral-300 text-xs sm:text-sm leading-relaxed max-w-md">
                 Custom streetwear cuts made with premium cotton fabric. Fit and purchase directly at our shop.
               </p>
 
-              <div className="pt-2">
+              <div className="pt-3">
                 <a
                   href="#contact"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white text-neutral-950 font-black text-xs tracking-widest uppercase hover:bg-[#C6A664] transition-all duration-300 shadow-xl"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 font-black text-xs tracking-widest uppercase hover:bg-[#C6A664] hover:text-neutral-950 transition-all duration-300 shadow-md active:scale-95"
                 >
                   <span>VISIT OUR STORE</span>
                   <MapPin size={14} />
@@ -81,41 +77,38 @@ export const Products = () => {
           </div>
 
           {/* Grooming Essentials Banner */}
-          <div className="relative h-[480px] sm:h-[520px] rounded-3xl overflow-hidden border border-neutral-200 shadow-xl group flex flex-col justify-between p-8 sm:p-10">
-            {/* Image & Overlay */}
+          <div className="relative min-h-105 md:min-h-120 lg:min-h-130 rounded-2xl sm:rounded-3xl overflow-hidden border border-neutral-200 shadow-lg hover:shadow-2xl group flex flex-col justify-between p-6 sm:p-8 transition-all duration-500">
+            {/* Image & High-Contrast Gradient Overlay */}
             <img
-              src="https://images.unsplash.com/photo-1621607512214-68297480165e?q=80&w=1000&auto=format&fit=crop"
+              src="/img/barber2.png"
               alt="Barber Grooming Essentials"
               className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-neutral-950 via-neutral-950/70 to-neutral-950/20" />
 
-            {/* Top Badge */}
-            <div className="relative z-10 flex justify-between items-start">
-              <div className="p-3 bg-white/90 backdrop-blur-md border border-neutral-200 rounded-2xl text-[#C6A664] shadow-md">
-                <Sparkles size={22} />
-              </div>
-              <span className="px-4 py-1.5 rounded-full bg-neutral-950/80 backdrop-blur-md border border-neutral-800 text-[10px] font-black text-white tracking-widest uppercase">
+            {/* Top Badge (Icon Removed) */}
+            <div className="relative z-10 flex justify-end items-center">
+              <span className="px-3.5 py-1.5 rounded-full bg-neutral-950/80 backdrop-blur-md border border-neutral-800 text-[9px] sm:text-[10px] font-black text-white tracking-widest uppercase shadow-md">
                 WALK-IN PURCHASES
               </span>
             </div>
 
             {/* Bottom Content */}
-            <div className="relative z-10 space-y-4">
-              <span className="text-[10px] font-black tracking-widest text-[#C6A664] uppercase block">
+            <div className="relative z-10 space-y-2 sm:space-y-3">
+              <span className="text-[10px] sm:text-xs font-black tracking-widest text-[#C6A664] uppercase block">
                 GROOMING ESSENTIALS
               </span>
-              <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-wide text-white leading-tight">
+              <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-wide text-white leading-tight">
                 BARBER-GRADE STYLING KITS
               </h3>
               <p className="text-neutral-300 text-xs sm:text-sm leading-relaxed max-w-md">
                 Precision matte pomades and grooming tools available right after your barber session.
               </p>
 
-              <div className="pt-2">
+              <div className="pt-3">
                 <a
                   href="#contact"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white text-neutral-950 font-black text-xs tracking-widest uppercase hover:bg-[#C6A664] transition-all duration-300 shadow-xl"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 font-black text-xs tracking-widest uppercase hover:bg-[#C6A664] hover:text-neutral-950 transition-all duration-300 shadow-md active:scale-95"
                 >
                   <span>GET LOCATION</span>
                   <ArrowUpRight size={14} />
