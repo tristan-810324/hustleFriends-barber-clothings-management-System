@@ -109,7 +109,7 @@ export const Navbar = () => {
             {/* Desktop Premium Gold Gradient Login / Register Button */}
             <a
               href="#login"
-              className="hidden lg:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37] via-[#C6A664] to-[#B38F48] text-neutral-950 text-xs font-black tracking-wider transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-[#C6A664]/30 hover:scale-[1.02] active:scale-95 border border-white/30"
+              className="hidden lg:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-[#D4AF37] via-[#C6A664] to-[#B38F48] text-neutral-950 text-xs font-black tracking-wider transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-[#C6A664]/30 hover:scale-[1.02] active:scale-95 border border-white/30"
             >
               <User size={15} className="text-neutral-950" />
               <span>LOGIN / REGISTER</span>
@@ -183,7 +183,7 @@ export const Navbar = () => {
           <a
             href="#login"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center justify-between px-6 py-4 rounded-2xl text-sm font-black tracking-widest text-neutral-950 bg-gradient-to-r from-[#D4AF37] via-[#C6A664] to-[#B38F48] hover:opacity-95 transition-all duration-300 shadow-xl border border-white/40"
+            className="flex items-center justify-between px-6 py-4 rounded-2xl text-sm font-black tracking-widest text-neutral-950 bg-linear-to-r from-[#D4AF37] via-[#C6A664] to-[#B38F48] hover:opacity-95 transition-all duration-300 shadow-xl border border-white/40"
           >
             <div className="flex items-center gap-3">
               <User size={20} />

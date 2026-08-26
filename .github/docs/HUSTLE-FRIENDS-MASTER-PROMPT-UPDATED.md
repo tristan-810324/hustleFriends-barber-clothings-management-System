@@ -85,7 +85,7 @@
 * React Router
 * TanStack Query
 * shadcn/ui
-
+* Dark Mode
 
 ### Backend
 
@@ -93,7 +93,7 @@
 * Express
 * TypeScript
 * Prisma ORM
-* PostgreSQL / MYSQL NA USING MYSQL WORK BENCH  
+* PostgreSQL/ MYSQL NA USING MYSQL WORKBENCH
 
 ### Supporting Technologies
 
@@ -258,26 +258,222 @@ All endpoints must have proper authentication, authorization, validation and err
 
 ---
 
-## 8. FRONTEND ARCHITECTURE
+## 8. MASTER PROJECT FOLDER STRUCTURE
+
+This is the **canonical / master folder architecture** for Hustle Friends.
+
+> **RULE:** Do not create random folders or place business logic wherever convenient. New files must follow this structure unless there is a clear architectural reason to change it.
 
 ```text
-frontend/
-└── src/
-    ├── components/
-    │   └── ProtectedRoute.tsx
-    ├── pages/
-    │   ├── client/
-    │   ├── staff/
-    │   └── owner/
-    ├── components/
-    ├── hooks/
-    ├── services/
-    ├── types/
-    ├── utils/
-    ├── layouts/
-    ├── App.tsx
-    └── main.tsx
+hustlefriends/
+│
+├── .github/
+│   ├── agents/                 # AI coding-agent instructions
+│   └── docs/                   # Master prompts, architecture docs, project docs
+│
+├── backend/
+│   ├── src/
+│   │   ├── config/             # Environment, database, app configuration
+│   │   ├── controllers/        # HTTP request/response handling
+│   │   ├── middleware/         # Auth, RBAC, validation, errors, rate limits
+│   │   ├── routes/             # API route definitions only
+│   │   ├── services/            # Business logic
+│   │   ├── validators/          # Zod request schemas
+│   │   ├── sockets/             # Socket.io events/handlers
+│   │   ├── utils/               # Reusable backend helpers
+│   │   ├── types/               # Backend TypeScript types
+│   │   ├── app.ts               # Express app configuration
+│   │   └── server.ts            # Server entry point
+│   │
+│   ├── prisma/
+│   │   ├── schema.prisma        # Database schema
+│   │   └── seed.ts              # Development/initial seed data
+│   │
+│   ├── tests/                   # Backend tests
+│   ├── .env                     # Local secrets - NEVER commit
+│   ├── .env.example             # Safe environment variable template
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── frontend/
+│   ├── public/                  # Static public assets
+│   │
+│   ├── src/
+│   │   ├── auth/                # Login, registration, OTP/auth UI
+│   │   │   ├── Login.tsx
+│   │   │   └── Register.tsx
+│   │   │
+│   │   ├── landing/             # Public landing page sections
+│   │   │   ├── components/
+│   │   │   └── LandingPage.tsx
+│   │   │
+│   │   ├── components/          # Reusable UI components
+│   │   │   ├── ui/              # Generic UI components
+│   │   │   ├── common/           # Shared business-independent components
+│   │   │   └── ProtectedRoute.tsx
+│   │   │
+│   │   ├── layouts/             # Client, Staff and Owner layouts
+│   │   │   ├── ClientLayout.tsx
+│   │   │   ├── StaffLayout.tsx
+│   │   │   └── OwnerLayout.tsx
+│   │   │
+│   │   ├── pages/               # Route-level screens
+│   │   │   ├── client/
+│   │   │   │   ├── Booking.tsx
+│   │   │   │   ├── BookingHistory.tsx
+│   │   │   │   ├── Transactions.tsx
+│   │   │   │   ├── Notifications.tsx
+│   │   │   │   └── Profile.tsx
+│   │   │   │
+│   │   │   ├── staff/
+│   │   │   │   ├── Dashboard.tsx
+│   │   │   │   ├── Bookings.tsx
+│   │   │   │   ├── POS.tsx
+│   │   │   │   ├── Inventory.tsx
+│   │   │   │   ├── PaymentLogs.tsx
+│   │   │   │   └── Messages.tsx
+│   │   │   │
+│   │   │   └── owner/
+│   │   │       ├── ExecutiveDashboard.tsx
+│   │   │       ├── Inventory.tsx
+│   │   │       ├── Services.tsx
+│   │   │       ├── Staff.tsx
+│   │   │       ├── Reports.tsx
+│   │   │       └── AuditLogs.tsx
+│   │   │
+│   │   ├── services/             # API calls / server communication
+│   │   │   ├── api.ts
+│   │   │   ├── auth.service.ts
+│   │   │   ├── booking.service.ts
+│   │   │   ├── transaction.service.ts
+│   │   │   └── inventory.service.ts
+│   │   │
+│   │   ├── hooks/                # Reusable React hooks
+│   │   ├── types/                # Shared frontend TypeScript types
+│   │   ├── utils/                # Frontend helpers/formatters
+│   │   ├── routes/               # React Router configuration
+│   │   ├── lib/                  # Third-party library configuration
+│   │   ├── assets/               # Images, icons and local assets
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   └── index.css
+│   │
+│   ├── tests/                    # Frontend tests
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── vite.config.ts
+│   └── index.html
+│
+├── .gitignore
+├── README.md
+└── docker-compose.yml            # Add when Docker setup is implemented
 ```
+
+### Folder Responsibility Rules
+
+```text
+FRONTEND
+    UI / user interaction / routing / API consumption
+                    ↓
+              HTTP / Socket.io
+                    ↓
+BACKEND
+    routes
+      ↓
+    middleware
+      ↓
+    controllers
+      ↓
+    services
+      ↓
+    Prisma
+      ↓
+POSTGRESQL DATABASE
+```
+
+### Backend Rules
+
+- `routes/` defines endpoints only.
+- `middleware/` handles authentication, RBAC, validation and request protection.
+- `controllers/` handles HTTP input/output.
+- `services/` contains business logic.
+- `validators/` contains Zod schemas.
+- `prisma/` contains database schema and seed logic.
+- Critical operations use `prisma.$transaction()`.
+- Routes must **not** contain complex business logic.
+
+### Frontend Rules
+
+- `pages/` contains route-level screens.
+- `components/` contains reusable components.
+- `layouts/` contains role-based application shells.
+- `services/` handles API communication.
+- `hooks/` contains reusable React logic.
+- `types/` contains TypeScript types.
+- `utils/` contains pure helper functions.
+- `auth/` contains authentication-related screens/components.
+- `landing/` contains the public landing page only.
+- Keep API calls out of large UI components when a service module is appropriate.
+
+### Role Separation
+
+```text
+CLIENT
+└── pages/client/
+
+STAFF
+└── pages/staff/
+
+OWNER
+└── pages/owner/
+```
+
+Never rely on frontend hiding alone for authorization. The backend must enforce the same RBAC rules.
+
+### Current Project Migration Rule
+
+The existing frontend may currently contain:
+
+```text
+src/
+├── auth/
+├── components/
+├── landing/
+├── App.tsx
+├── index.css
+└── main.tsx
+```
+
+This is acceptable during development. As features are implemented, organize new route-level screens and modules according to the **master structure above**. Do not perform a large destructive restructure unless it is necessary.
+
+### Build Order Based on the Master Structure
+
+```text
+1. Root project architecture
+2. Backend configuration + Prisma
+3. Database schema + migrations + seed
+4. Authentication + OTP
+5. JWT cookie authentication
+6. RBAC middleware
+7. Frontend routing + protected routes
+8. Owner Services
+9. Owner Inventory
+10. Barber schedules
+11. Client booking + availability
+12. Staff booking management
+13. Staff POS + payments
+14. Inventory/stock transaction safety
+15. Socket.io notifications
+16. Dashboards + analytics
+17. Reports + exports
+18. Audit logs
+19. Testing + security hardening
+20. UI/UX polish
+```
+
+---
+
+## 9. FRONTEND ARCHITECTURE
 
 ### Login Redirect
 
@@ -289,7 +485,9 @@ OWNER  → /owner/executive-dashboard
 
 ---
 
-## 9. BACKEND ARCHITECTURE
+---
+
+## 10. BACKEND ARCHITECTURE
 
 ```text
 backend/
@@ -320,7 +518,7 @@ Business logic must not be placed directly inside routes.
 
 ---
 
-## 10. CRITICAL TRANSACTION LOGIC
+## 11. CRITICAL TRANSACTION LOGIC
 
 ### POS Checkout
 
@@ -360,7 +558,7 @@ Then create booking using a safe database transaction/constraint strategy.
 
 ---
 
-## 11. REAL-TIME FEATURES
+## 12. REAL-TIME FEATURES
 
 Use **Socket.io** for:
 
@@ -372,7 +570,7 @@ Use **Socket.io** for:
 
 ---
 
-## 12. AUDIT TRAIL
+## 13. AUDIT TRAIL
 
 `AuditLog` must be treated as immutable.
 
@@ -403,7 +601,7 @@ details
 
 ---
 
-## 13. DEVELOPMENT ORDER
+## 14. DEVELOPMENT ORDER
 
 Build in this order:
 
@@ -432,7 +630,7 @@ Build in this order:
 
 ---
 
-## 14. DEVELOPMENT STANDARD
+## 15. DEVELOPMENT STANDARD
 
 Every implementation must prioritize:
 
@@ -454,7 +652,7 @@ Every implementation must prioritize:
 
 ---
 
-## 15. ENVIRONMENT VARIABLES
+## 16. ENVIRONMENT VARIABLES
 
 ```env
 PORT=5000
@@ -471,7 +669,7 @@ Keep the same variable structure for local development and production.
 
 ---
 
-## 16. MASTER RULE FOR AI CODING ASSISTANTS
+## 17. MASTER RULE FOR AI CODING ASSISTANTS
 
 Before writing code:
 
@@ -556,3 +754,4 @@ Hustle Friends Co. is an internal shop management system and client appointment 
 - **Responsiveness:** Highly visual, desktop-optimized layouts for Staff POS & Owner Panels; mobile-friendly responsive views for Client Booking screens. \
 
 ## 5. deployement docker mo muna tas render para libre deployement
+                                 

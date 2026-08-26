@@ -90,7 +90,7 @@ export const Footer = () => {
                 href="https://maps.google.com/?q=KM.+38+National+Road,+Pulong+Buhangin,+Santa+Maria,+3022+Bulacan"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37] via-[#C6A664] to-[#B38F48] hover:opacity-95 text-neutral-950 text-xs font-black tracking-wider transition-all duration-300 shadow-md active:scale-95"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-[#D4AF37] via-[#C6A664] to-[#B38F48] hover:opacity-95 text-neutral-950 text-xs font-black tracking-wider transition-all duration-300 shadow-md active:scale-95"
               >
                 <span>GET DIRECTIONS</span>
                 <ExternalLink size={14} />

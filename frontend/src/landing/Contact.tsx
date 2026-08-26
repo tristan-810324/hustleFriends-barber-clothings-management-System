@@ -12,7 +12,6 @@ export const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Connects to Backend POST /api/messages
     console.log('Message sent:', formData);
   };
 

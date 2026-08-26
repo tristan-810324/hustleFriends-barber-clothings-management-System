@@ -9,10 +9,16 @@ import { Coffee } from './landing/Coffee';
 import { Contact } from './landing/Contact';
 import Login from './auth/Login';
 import Register from './auth/Register';
+import ForgotPassword from './auth/ForgotPassword';
+import ResetOtp from './auth/ResetOtp';
+import ResetPassword from './auth/ResetPassword';
 
 const getCurrentView = () => {
   if (window.location.hash === '#login') return 'login';
   if (window.location.hash === '#register') return 'register';
+  if (window.location.hash === '#forgot-password') return 'forgot-password';
+  if (window.location.hash === '#reset-otp') return 'reset-otp';
+  if (window.location.hash === '#reset-password') return 'reset-password';
   return 'home';
 };
 
@@ -34,6 +40,18 @@ function App() {
 
   if (currentView === 'register') {
     return <Register />;
+  }
+
+  if (currentView === 'forgot-password') {
+    return <ForgotPassword />;
+  }
+
+  if (currentView === 'reset-otp') {
+    return <ResetOtp />;
+  }
+
+  if (currentView === 'reset-password') {
+    return <ResetPassword />;
   }
 
   return (

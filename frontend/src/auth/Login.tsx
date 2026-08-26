@@ -24,10 +24,45 @@ const GoogleIcon = () => (
 
 export const Login = () => {
 	const [showPassword, setShowPassword] = useState(false);
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [otp, setOtp] = useState('');
+	const [otpMode, setOtpMode] = useState(false);
+	const [error, setError] = useState('');
+	const [message, setMessage] = useState('');
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isResending, setIsResending] = useState(false);
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		// Handle login submission logic here
+		setError('');
+		setMessage('');
+		setIsSubmitting(true);
+		try {
+			setMessage(otpMode ? 'Authentication will be connected later.' : 'Backend authentication has been removed for the restart.');
+		} catch (submissionError) {
+			const submissionMessage = submissionError instanceof Error ? submissionError.message : 'Unable to sign in';
+			if (!otpMode && submissionMessage.includes('verification code')) {
+				setOtpMode(true);
+				setMessage(submissionMessage);
+			} else {
+				setError(submissionMessage);
+			}
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
+	const handleResend = async () => {
+		setError('');
+		setIsResending(true);
+		try {
+			setMessage('Backend authentication has been removed for the restart.');
+		} catch (submissionError) {
+			setError(submissionError instanceof Error ? submissionError.message : 'Unable to resend code');
+		} finally {
+			setIsResending(false);
+		}
 	};
 
 	return (
@@ -105,13 +140,13 @@ export const Login = () => {
 							</div>
 							<div className="mb-4">
 								<p className="text-xs font-black tracking-[0.25em] text-[#C6A664] uppercase">
-									Welcome Back
+									{otpMode ? 'Verify Email' : 'Welcome Back'}
 								</p>
 								<h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">
-									Sign in to your account
+									{otpMode ? 'Enter your verification code' : 'Sign in to your account'}
 								</h2>
 								<p className="mt-1.5 text-xs text-neutral-400 sm:text-sm">
-									Continue your bookings, coffee rewards, and style drops.
+									{otpMode ? `We sent a 6-digit code to ${email}.` : 'Continue your bookings, coffee rewards, and style drops.'}
 								</p>
 							</div>
 
@@ -133,6 +168,10 @@ export const Login = () => {
 
 							{/* Email & Password Form */}
 							<form onSubmit={handleSubmit} className="space-y-3.5">
+								{otpMode && <label className="block">
+									<span className="mb-1.5 block text-xs font-bold tracking-[0.12em] text-neutral-300 uppercase">6-Digit Code</span>
+									<input type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required value={otp} onChange={(event) => setOtp(event.target.value)} placeholder="123456" className="w-full rounded-xl border border-neutral-800 bg-neutral-950/90 px-4 py-3 text-center text-lg tracking-[0.5em] outline-none focus:border-[#C6A664]" />
+								</label>}
 								<label className="block">
 									<span className="mb-1.5 block text-xs font-bold tracking-[0.12em] text-neutral-300 uppercase">
 										Email / Username
@@ -141,8 +180,10 @@ export const Login = () => {
 										<Mail size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-neutral-500" />
 										<input
 											type="email"
+											value={email}
+											onChange={(event) => setEmail(event.target.value)}
 											required
-											placeholder="you@example.com"
+											placeholder="username@gmail.com"
 											className="w-full rounded-xl border border-neutral-800 bg-neutral-950/90 py-3 pr-3 pl-10 text-sm outline-none transition placeholder:text-neutral-600 focus:border-[#C6A664] focus:ring-1 focus:ring-[#C6A664]"
 										/>
 									</div>
@@ -156,6 +197,8 @@ export const Login = () => {
 										<Lock size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-neutral-500" />
 										<input
 											type={showPassword ? 'text' : 'password'}
+											value={password}
+											onChange={(event) => setPassword(event.target.value)}
 											required
 											placeholder="Enter password"
 											className="w-full rounded-xl border border-neutral-800 bg-neutral-950/90 py-3 pr-11 pl-10 text-sm outline-none transition placeholder:text-neutral-600 focus:border-[#C6A664] focus:ring-1 focus:ring-[#C6A664]"
@@ -171,12 +214,16 @@ export const Login = () => {
 									</div>
 								</label>
 
+								{error && <p className="rounded-lg border border-red-900/60 bg-red-950/30 px-3 py-2 text-xs text-red-300" role="alert">{error}</p>}
+								{message && <p className="rounded-lg border border-emerald-900/60 bg-emerald-950/30 px-3 py-2 text-xs text-emerald-300" role="status">{message}</p>}
+								{otpMode && <button type="button" onClick={handleResend} disabled={isResending} className="w-full text-xs font-semibold text-[#C6A664] hover:text-white disabled:opacity-50">{isResending ? 'Sending...' : 'Resend verification code'}</button>}
+
 								<div className="flex items-center justify-between text-xs">
 									<label className="flex cursor-pointer items-center gap-2 text-neutral-300">
 										<input type="checkbox" className="h-4 w-4 rounded border-neutral-700 bg-neutral-900 accent-[#C6A664]" />
 										Remember me
 									</label>
-									<a href="#" className="font-semibold text-[#C6A664] transition hover:text-white hover:underline">
+									<a href="#forgot-password" className="font-semibold text-[#C6A664] transition hover:text-white hover:underline">
 										Forgot password?
 									</a>
 								</div>
@@ -185,7 +232,7 @@ export const Login = () => {
 									type="submit"
 									className="group mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#C6A664] px-4 py-3 text-xs font-black tracking-[0.12em] text-neutral-950 uppercase transition active:scale-[0.98] hover:bg-white sm:text-sm"
 								>
-									<span>Authorize Access</span>
+									<span>{isSubmitting ? 'Please wait...' : otpMode ? 'Verify and sign in' : 'Authorize Access'}</span>
 									<ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
 								</button>
 							</form>

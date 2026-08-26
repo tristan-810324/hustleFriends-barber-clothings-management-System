@@ -25,10 +25,41 @@ const GoogleIcon = () => (
 export const Register = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [fullName, setFullName] = useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
+	const [otp, setOtp] = useState('');
+	const [otpMode, setOtpMode] = useState(false);
+	const [error, setError] = useState('');
+	const [message, setMessage] = useState('');
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isResending, setIsResending] = useState(false);
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		// Handle register submission logic here
+		setError('');
+		setMessage('');
+		if (!otpMode && password !== confirmPassword) return setError('Passwords do not match');
+		setIsSubmitting(true);
+		try {
+			if (otpMode) {
+				setMessage('Authentication will be connected later.');
+			} else {
+				setOtpMode(true);
+				setMessage('Backend authentication has been removed for the restart.');
+			}
+		} catch (submissionError) {
+			setError(submissionError instanceof Error ? submissionError.message : 'Unable to create account');
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
+	const handleResend = async () => {
+		setError('');
+		setIsResending(true);
+		try { setMessage('Backend authentication has been removed for the restart.'); } finally { setIsResending(false); }
 	};
 
 	return (
@@ -95,8 +126,8 @@ export const Register = () => {
 					<div className="relative z-10 mx-auto my-auto w-full max-w-md py-2">
 						<div className="p-1">
 							<div className="mb-3">
-								<p className="text-xs font-black tracking-[0.25em] text-[#C6A664] uppercase">Create Account</p>
-								<h2 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">Register your profile</h2>
+								<p className="text-xs font-black tracking-[0.25em] text-[#C6A664] uppercase">{otpMode ? 'Verify Email' : 'Create Account'}</p>
+								<h2 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">{otpMode ? 'Enter your verification code' : 'Register your profile'}</h2>
 								<p className="mt-1 text-xs text-neutral-400 sm:text-sm">
 									Start booking, collecting rewards, and accessing exclusive drops.
 								</p>
@@ -116,13 +147,16 @@ export const Register = () => {
 								<div className="h-px flex-1 bg-neutral-800" />
 							</div>
 
-							<form onSubmit={handleSubmit} className="space-y-2.5">
+								<form onSubmit={handleSubmit} className="space-y-2.5">
+									{otpMode ? <label className="block"><span className="mb-1 block text-xs font-bold tracking-[0.12em] text-neutral-300 uppercase">6-Digit Code</span><input type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required value={otp} onChange={(event) => setOtp(event.target.value)} placeholder="123456" className="w-full rounded-xl border border-neutral-800 bg-neutral-950/90 px-4 py-3 text-center text-lg tracking-[0.5em] outline-none focus:border-[#C6A664]" /></label> : <>
 								<label className="block">
 									<span className="mb-1 block text-xs font-bold tracking-[0.12em] text-neutral-300 uppercase">Full Name</span>
 									<div className="relative">
 										<User size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-neutral-500" />
 										<input
 											type="text"
+											value={fullName}
+											onChange={(event) => setFullName(event.target.value)}
 											required
 											placeholder="Juan Dela Cruz"
 											className="w-full rounded-xl border border-neutral-800 bg-neutral-950/90 py-2.5 pr-3 pl-10 text-sm outline-none transition placeholder:text-neutral-600 focus:border-[#C6A664] focus:ring-1 focus:ring-[#C6A664]"
@@ -136,6 +170,8 @@ export const Register = () => {
 										<Mail size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-neutral-500" />
 										<input
 											type="email"
+											value={email}
+											onChange={(event) => setEmail(event.target.value)}
 											required
 											placeholder="you@example.com"
 											className="w-full rounded-xl border border-neutral-800 bg-neutral-950/90 py-2.5 pr-3 pl-10 text-sm outline-none transition placeholder:text-neutral-600 focus:border-[#C6A664] focus:ring-1 focus:ring-[#C6A664]"
@@ -149,6 +185,8 @@ export const Register = () => {
 										<Lock size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-neutral-500" />
 										<input
 											type={showPassword ? 'text' : 'password'}
+											value={password}
+											onChange={(event) => setPassword(event.target.value)}
 											required
 											placeholder="Create password"
 											className="w-full rounded-xl border border-neutral-800 bg-neutral-950/90 py-2.5 pr-11 pl-10 text-sm outline-none transition placeholder:text-neutral-600 focus:border-[#C6A664] focus:ring-1 focus:ring-[#C6A664]"
@@ -170,6 +208,8 @@ export const Register = () => {
 										<Lock size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-neutral-500" />
 										<input
 											type={showConfirmPassword ? 'text' : 'password'}
+											value={confirmPassword}
+											onChange={(event) => setConfirmPassword(event.target.value)}
 											required
 											placeholder="Confirm password"
 											className="w-full rounded-xl border border-neutral-800 bg-neutral-950/90 py-2.5 pr-11 pl-10 text-sm outline-none transition placeholder:text-neutral-600 focus:border-[#C6A664] focus:ring-1 focus:ring-[#C6A664]"
@@ -183,13 +223,17 @@ export const Register = () => {
 											{showConfirmPassword ? <EyeOff size={17} /> : <Eye size={17} />}
 										</button>
 									</div>
-								</label>
+									</label></>}
+
+									{error && <p className="rounded-lg border border-red-900/60 bg-red-950/30 px-3 py-2 text-xs text-red-300" role="alert">{error}</p>}
+									{message && <p className="rounded-lg border border-emerald-900/60 bg-emerald-950/30 px-3 py-2 text-xs text-emerald-300" role="status">{message}</p>}
+									{otpMode && <button type="button" onClick={handleResend} disabled={isResending} className="w-full text-xs font-semibold text-[#C6A664] hover:text-white disabled:opacity-50">{isResending ? 'Sending...' : 'Resend verification code'}</button>}
 
 								<button
 									type="submit"
 									className="group mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#C6A664] px-4 py-3 text-xs font-black tracking-[0.12em] text-neutral-950 uppercase transition active:scale-[0.98] hover:bg-white sm:text-sm"
 								>
-									<span>Create Account</span>
+										<span>{isSubmitting ? 'Please wait...' : otpMode ? 'Verify Email' : 'Create Account'}</span>
 									<ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
 								</button>
 							</form>
