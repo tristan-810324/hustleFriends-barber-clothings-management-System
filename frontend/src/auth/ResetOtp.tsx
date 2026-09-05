@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import React, { useState } from 'react';
+import { authApi } from './api';
 
 export const ResetOtp = () => {
 	const [otp, setOtp] = useState('');
@@ -15,7 +16,11 @@ export const ResetOtp = () => {
 		setIsSubmitting(true);
 
 		try {
-			setMessage('OTP verified for reset flow. Continue to create a new password.');
+			const email = sessionStorage.getItem('resetEmail');
+			if (!email) throw new Error('Reset session expired. Please request a new code.');
+			const { token } = await authApi.verifyResetOtp({ email, otp });
+			sessionStorage.setItem('resetToken', token);
+			setMessage('OTP verified. Continue to create a new password.');
 			window.location.hash = '#reset-password';
 		} catch (submissionError) {
 			setError(submissionError instanceof Error ? submissionError.message : 'Unable to verify code');

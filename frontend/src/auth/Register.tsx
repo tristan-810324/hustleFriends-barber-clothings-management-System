@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import React, { useState } from 'react';
+import { authApi } from './api';
 
 const GoogleIcon = () => (
 	<svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 shrink-0" role="img">
@@ -44,10 +45,13 @@ export const Register = () => {
 		setIsSubmitting(true);
 		try {
 			if (otpMode) {
-				setMessage('Authentication will be connected later.');
+				await authApi.verifyOtp({ email, otp });
+				setMessage('Email verified. You can now sign in.');
+				window.location.hash = '#login';
 			} else {
+				await authApi.register({ fullName, email, password });
 				setOtpMode(true);
-				setMessage('Backend authentication has been removed for the restart.');
+				setMessage('Verification code sent. Check your email.');
 			}
 		} catch (submissionError) {
 			setError(submissionError instanceof Error ? submissionError.message : 'Unable to create account');
@@ -59,7 +63,7 @@ export const Register = () => {
 	const handleResend = async () => {
 		setError('');
 		setIsResending(true);
-		try { setMessage('Backend authentication has been removed for the restart.'); } finally { setIsResending(false); }
+		try { setMessage('Please use the verification code from your email.'); } finally { setIsResending(false); }
 	};
 
 	return (

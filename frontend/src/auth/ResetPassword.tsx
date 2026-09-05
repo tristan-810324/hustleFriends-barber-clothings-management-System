@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock } from 'lucide-react';
 import React, { useState } from 'react';
+import { authApi } from './api';
 
 export const ResetPassword = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -23,10 +24,14 @@ export const ResetPassword = () => {
 		setIsSubmitting(true);
 
 		try {
-			setMessage('Password reset UI is complete and ready for backend integration. Redirecting to login...');
-			setTimeout(() => {
-				window.location.hash = '#login';
-			}, 1000);
+			const email = sessionStorage.getItem('resetEmail');
+			const token = sessionStorage.getItem('resetToken');
+			if (!email || !token) throw new Error('Reset session expired. Please request a new code.');
+			await authApi.resetPassword({ email, token, password });
+			sessionStorage.removeItem('resetEmail');
+			sessionStorage.removeItem('resetToken');
+			setMessage('Password updated. Redirecting to login...');
+			setTimeout(() => { window.location.hash = '#login'; }, 1000);
 		} catch (submissionError) {
 			setError(submissionError instanceof Error ? submissionError.message : 'Unable to reset password');
 		} finally {

@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, Mail } from 'lucide-react';
 import React, { useState } from 'react';
+import { authApi } from './api';
 
 export const ForgotPassword = () => {
 	const [email, setEmail] = useState('');
@@ -14,7 +15,9 @@ export const ForgotPassword = () => {
 		setIsSubmitting(true);
 
 		try {
-			setMessage('Reset OTP has been prepared for integration. Continue to OTP verification.');
+			await authApi.forgotPassword({ email });
+			sessionStorage.setItem('resetEmail', email);
+			setMessage('If an account exists for that email, reset instructions have been sent.');
 			window.location.hash = '#reset-otp';
 		} catch (submissionError) {
 			setError(submissionError instanceof Error ? submissionError.message : 'Unable to process request');

@@ -26,10 +26,10 @@ Hindi muna kasama ang Docker. Ise-set up muna ang local PostgreSQL at normal Ren
 3. Iche-check kung existing na ang email.
 4. Iha-hash ang password gamit ang bcryptjs.
 5. Gagawa ng user na may `isVerified = false` at default role na `CLIENT`.
-6. Gagawa ng single-use, expiring six-digit OTP.
+6. Gagawa ng single-use, expiring six-digit OTP. 
 7. Ise-save ang hashed OTP at expiration time sa database.
 8. Ipapadala ang plain OTP sa email gamit ang Nodemailer.
-9. Hindi papayagang mag-login ang user hangga't hindi verified.
+9. Hindi papayagang mag-login ang user hangga't hindi verified. pero once na nagregister sha at at hindi nag otp, tas chaka sya nagtry na maglogin agd, ang mangyayari ay mapupunta ulit sya sa otp at need nya ilagay ang tamang otp na sinend sa kanyang email.  
 
 ### OTP Verification
 
