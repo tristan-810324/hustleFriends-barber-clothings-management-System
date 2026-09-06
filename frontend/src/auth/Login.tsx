@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import React, { useState } from 'react';
 import { authApi } from './api';
+import { getAuthErrorMessage } from './authMessages';
 
 const GoogleIcon = () => (
 	<svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 shrink-0" role="img">
@@ -42,17 +43,20 @@ export const Login = () => {
 		try {
 			if (otpMode) {
 				await authApi.verifyOtp({ email, otp });
-				setMessage('Email verified. You can now sign in.');
-				setOtpMode(false);
+				const { user } = await authApi.login({ email, password });
+				window.sessionStorage.setItem('clientEmail', user.email);
+				setMessage('Email verified. Signing you in...');
+				window.location.hash = user.role === 'OWNER' ? '#owner' : user.role === 'STAFF' ? '#staff' : '#client';
 				return;
 			}
 			const { user } = await authApi.login({ email, password });
+			window.sessionStorage.setItem('clientEmail', user.email);
 			window.location.hash = user.role === 'OWNER' ? '#owner' : user.role === 'STAFF' ? '#staff' : '#client';
 		} catch (submissionError) {
-			const submissionMessage = submissionError instanceof Error ? submissionError.message : 'Unable to sign in';
-			if (!otpMode && submissionMessage.includes('verification code')) {
+			const submissionMessage = getAuthErrorMessage(submissionError, 'We could not sign you in. Please try again.');
+			if (!otpMode && submissionMessage.toLowerCase().includes('verification')) {
 				setOtpMode(true);
-				setMessage(submissionMessage);
+				setMessage('Your account still needs verification. A new OTP has been sent to your email.');
 			} else {
 				setError(submissionMessage);
 			}
@@ -65,9 +69,10 @@ export const Login = () => {
 		setError('');
 		setIsResending(true);
 		try {
-			setMessage('Please use the verification code from your email.');
+			const result = await authApi.resendOtp({ email });
+			setMessage(result.message);
 		} catch (submissionError) {
-			setError(submissionError instanceof Error ? submissionError.message : 'Unable to resend code');
+			setError(getAuthErrorMessage(submissionError, 'We could not send a new code. Please try again.'));
 		} finally {
 			setIsResending(false);
 		}

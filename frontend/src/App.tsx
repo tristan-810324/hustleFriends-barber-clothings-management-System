@@ -12,6 +12,7 @@ import Register from './auth/Register';
 import ForgotPassword from './auth/ForgotPassword';
 import ResetOtp from './auth/ResetOtp';
 import ResetPassword from './auth/ResetPassword';
+import ClientDashboard from './client/ClientDashboard';
 
 const getCurrentView = () => {
   if (window.location.hash === '#login') return 'login';
@@ -19,6 +20,7 @@ const getCurrentView = () => {
   if (window.location.hash === '#forgot-password') return 'forgot-password';
   if (window.location.hash === '#reset-otp') return 'reset-otp';
   if (window.location.hash === '#reset-password') return 'reset-password';
+  if (window.location.hash === '#client') return 'client';
   return 'home';
 };
 
@@ -52,6 +54,10 @@ function App() {
 
   if (currentView === 'reset-password') {
     return <ResetPassword />;
+  }
+
+  if (currentView === 'client') {
+    return <ClientDashboard email={window.sessionStorage.getItem('clientEmail') ?? 'verified client'} />;
   }
 
   return (

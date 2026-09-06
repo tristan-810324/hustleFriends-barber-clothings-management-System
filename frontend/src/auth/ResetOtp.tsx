@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import React, { useState } from 'react';
 import { authApi } from './api';
+import { getAuthErrorMessage } from './authMessages';
 
 export const ResetOtp = () => {
 	const [otp, setOtp] = useState('');
@@ -18,12 +19,11 @@ export const ResetOtp = () => {
 		try {
 			const email = sessionStorage.getItem('resetEmail');
 			if (!email) throw new Error('Reset session expired. Please request a new code.');
-			const { token } = await authApi.verifyResetOtp({ email, otp });
-			sessionStorage.setItem('resetToken', token);
+			await authApi.verifyResetOtp({ email, otp });
 			setMessage('OTP verified. Continue to create a new password.');
 			window.location.hash = '#reset-password';
 		} catch (submissionError) {
-			setError(submissionError instanceof Error ? submissionError.message : 'Unable to verify code');
+			setError(getAuthErrorMessage(submissionError, 'We could not verify that code. Please try again.'));
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -34,9 +34,12 @@ export const ResetOtp = () => {
 		setIsResending(true);
 
 		try {
-			setMessage('New OTP request is ready for backend integration.');
+			const email = sessionStorage.getItem('resetEmail');
+			if (!email) throw new Error('Reset session expired. Please request a new code.');
+			const result = await authApi.resendResetOtp({ email });
+			setMessage(result.message);
 		} catch (submissionError) {
-			setError(submissionError instanceof Error ? submissionError.message : 'Unable to resend code');
+			setError(getAuthErrorMessage(submissionError, 'We could not send a new code. Please try again.'));
 		} finally {
 			setIsResending(false);
 		}

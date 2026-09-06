@@ -1,0 +1,64 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CLIENT
+  STAFF
+  OWNER
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  fullName    String
+  passwordHash String
+  role        Role     @default(CLIENT)
+  isVerified  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  otps           Otp[]
+  passwordResets PasswordReset[]
+
+  @@index([isVerified, isActive])
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  codeHash  String
+  purpose   OtpPurpose @default(REGISTRATION)
+  expiresAt DateTime
+  isUsed    Boolean  @default(false)
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose, expiresAt, isUsed])
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  tokenHash String
+  expiresAt DateTime
+  isUsed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt, isUsed])
+}
+
+enum OtpPurpose {
+  REGISTRATION
+  PASSWORD_RESET
+}

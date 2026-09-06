@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { authApi } from './api';
+import { getAuthErrorMessage } from './authMessages';
 
 const GoogleIcon = () => (
 	<svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 shrink-0" role="img">
@@ -54,7 +55,7 @@ export const Register = () => {
 				setMessage('Verification code sent. Check your email.');
 			}
 		} catch (submissionError) {
-			setError(submissionError instanceof Error ? submissionError.message : 'Unable to create account');
+			setError(getAuthErrorMessage(submissionError, 'We could not create your account. Please try again.'));
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -63,7 +64,14 @@ export const Register = () => {
 	const handleResend = async () => {
 		setError('');
 		setIsResending(true);
-		try { setMessage('Please use the verification code from your email.'); } finally { setIsResending(false); }
+		try {
+			const result = await authApi.resendOtp({ email });
+			setMessage(result.message);
+		} catch (submissionError) {
+			setError(getAuthErrorMessage(submissionError, 'We could not send a new code. Please try again.'));
+		} finally {
+			setIsResending(false);
+		}
 	};
 
 	return (
