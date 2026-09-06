@@ -1,14 +1,22 @@
 # React + TypeScript + Vite
 
-## Deploying to Vercel
+## Run Locally
 
-This app is contained in the `frontend` directory. In the Vercel project settings, set **Root Directory** to `frontend`. Vercel will then use the existing scripts automatically:
+From this directory, install dependencies and start the development server:
 
-- Build Command: `npm run build`
-- Output Directory: `dist`
-- Install Command: `npm install`
+```powershell
+npm install
+npm run dev
+```
 
-No `vercel.json` file is required. The app uses hash-based routes, so direct links such as `/#login` do not need a server rewrite.
+To create and verify a production build locally:
+
+```powershell
+npm run build
+npm run lint
+```
+
+The app uses hash-based views, so pages such as `/#login` can be tested directly in the local browser.
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
