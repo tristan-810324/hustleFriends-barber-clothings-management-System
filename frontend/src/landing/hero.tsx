@@ -1,4 +1,5 @@
 import { ArrowUpRight, Coffee, Scissors, ShoppingBag } from 'lucide-react';
+import { Reveal } from '../components/effects/Reveal';
 
 export const Hero = () => {
   return (
@@ -6,7 +7,7 @@ export const Hero = () => {
       
       {/* Background Image Layer with Vignette Gradient Overlay */}
       <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105"
+        className="effect-hero-bg absolute inset-0 z-0 bg-cover bg-center bg-no-repeat scale-105"
         style={{ backgroundImage: `url('/img/background.png')` }}
       >
         {/* Dark Radial Overlay for High Text Contrast */}
@@ -18,7 +19,7 @@ export const Hero = () => {
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 lg:gap-12 items-center my-auto relative z-10 py-2 sm:py-4 lg:py-0">
         
         {/* Left Side: Main Typography & Brand Narrative */}
-        <div className="lg:col-span-7 space-y-3 sm:space-y-5 md:space-y-6">
+        <Reveal className="lg:col-span-7 space-y-3 sm:space-y-5 md:space-y-6" direction="left">
           
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[0.9] uppercase text-white">
@@ -51,15 +52,15 @@ export const Hero = () => {
               Book Appointment
             </a>
           </div>
-        </div>
+        </Reveal>
 
         {/* Right Side: Interactive Feature Cards (Compact Glassmorphism Layout) */}
-        <div className="lg:col-span-5 space-y-3 sm:space-y-4">
+        <Reveal className="lg:col-span-5 space-y-3 sm:space-y-4" direction="right" delay={180}>
           
           {/* Main Featured Card */}
           <a 
             href="#shop"
-            className="block bg-neutral-900/60 backdrop-blur-xl border border-neutral-800/90 hover:border-[#C6A664]/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl relative group transition-all duration-300 shadow-2xl hover:-translate-y-1"
+            className="effect-float block bg-neutral-900/60 backdrop-blur-xl border border-neutral-800/90 hover:border-[#C6A664]/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl relative group transition-all duration-300 shadow-2xl hover:-translate-y-1"
           >
             <div className="flex justify-between items-start mb-4 sm:mb-6">
               <div className="p-2.5 sm:p-3 bg-neutral-950/80 border border-neutral-800 rounded-xl sm:rounded-2xl text-[#C6A664] group-hover:bg-[#C6A664] group-hover:text-neutral-950 transition-colors duration-300">
@@ -79,7 +80,7 @@ export const Hero = () => {
             {/* Barber Card */}
             <a 
               href="#barber"
-              className="bg-neutral-900/60 backdrop-blur-xl border border-neutral-800/90 hover:border-[#C6A664]/60 p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl group transition-all duration-300 hover:-translate-y-1 shadow-xl"
+              className="effect-float-delayed bg-neutral-900/60 backdrop-blur-xl border border-neutral-800/90 hover:border-[#C6A664]/60 p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl group transition-all duration-300 hover:-translate-y-1 shadow-xl"
             >
               <div className="p-2.5 bg-neutral-950/80 border border-neutral-800 w-fit rounded-xl text-[#C6A664] mb-3 group-hover:bg-[#C6A664] group-hover:text-neutral-950 transition-colors duration-300">
                 <Scissors size={16} />
@@ -93,7 +94,7 @@ export const Hero = () => {
             {/* Coffee Card */}
             <a 
               href="#coffee"
-              className="bg-neutral-900/60 backdrop-blur-xl border border-neutral-800/90 hover:border-[#C6A664]/60 p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl group transition-all duration-300 hover:-translate-y-1 shadow-xl"
+              className="effect-float bg-neutral-900/60 backdrop-blur-xl border border-neutral-800/90 hover:border-[#C6A664]/60 p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl group transition-all duration-300 hover:-translate-y-1 shadow-xl"
             >
               <div className="p-2.5 bg-neutral-950/80 border border-neutral-800 w-fit rounded-xl text-[#C6A664] mb-3 group-hover:bg-[#C6A664] group-hover:text-neutral-950 transition-colors duration-300">
                 <Coffee size={16} />
@@ -105,7 +106,7 @@ export const Hero = () => {
             </a>
 
           </div>
-        </div>
+        </Reveal>
       </div>
 
       {/* Footer / Scroll Prompt Indicator */}

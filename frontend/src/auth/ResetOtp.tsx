@@ -46,16 +46,16 @@ export const ResetOtp = () => {
 	};
 
 	return (
-		<section className="relative min-h-screen w-full overflow-x-hidden bg-neutral-950 text-white selection:bg-[#C6A664] selection:text-neutral-950">
+		<section className="auth-page relative min-h-screen w-full overflow-x-hidden bg-neutral-950 text-white selection:bg-[#C6A664] selection:text-neutral-950">
 			<div className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
 				<aside className="relative hidden flex-col justify-between p-8 sm:p-10 lg:flex lg:p-12 xl:p-14">
 					<div
-						className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
+						className="auth-hero absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
 						style={{ backgroundImage: "url('/img/background.png')" }}
 					/>
 					<div className="absolute inset-0 bg-linear-to-t from-neutral-950 via-neutral-950/50 to-neutral-950/70" />
 
-					<div className="relative z-10">
+					<div className="auth-branding relative z-10">
 						<a href="/" className="inline-block transition hover:opacity-80">
 							<img
 								src="/img/HustleLogoWhite.png"
@@ -65,7 +65,7 @@ export const ResetOtp = () => {
 						</a>
 					</div>
 
-					<div className="relative z-10">
+					<div className="auth-branding relative z-10">
 						<h1 className="text-4xl font-black leading-none tracking-tight uppercase sm:text-5xl xl:text-6xl">
 							Security Check.<br />
 							<span className="text-[#C6A664]">One More Step.</span>
@@ -82,7 +82,7 @@ export const ResetOtp = () => {
 						<div className="absolute bottom-[15%] left-[10%] h-60 w-60 rounded-full bg-white/8 blur-3xl" />
 					</div>
 
-					<div className="relative z-10 flex items-center justify-between gap-4">
+					<div className="auth-navigation relative z-10 flex items-center justify-between gap-4">
 						<a
 							href="#forgot-password"
 							className="group inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-900/60 px-3.5 py-2 text-xs font-semibold text-neutral-300 backdrop-blur-md transition hover:border-[#C6A664]/50 hover:bg-neutral-800 hover:text-white"
@@ -100,7 +100,7 @@ export const ResetOtp = () => {
 						</a>
 					</div>
 
-					<div className="relative z-10 mx-auto my-auto w-full max-w-md py-2">
+					<div className="auth-form relative z-10 mx-auto my-auto w-full max-w-md py-2">
 						<div className="p-1">
 							<div className="mb-3">
 								<p className="text-xs font-black tracking-[0.25em] text-[#C6A664] uppercase">Verify OTP</p>
@@ -140,7 +140,7 @@ export const ResetOtp = () => {
 
 								<button
 									type="submit"
-									className="group mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#C6A664] px-4 py-3 text-xs font-black tracking-[0.12em] text-neutral-950 uppercase transition active:scale-[0.98] hover:bg-white sm:text-sm"
+									className="auth-action group mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#C6A664] px-4 py-3 text-xs font-black tracking-[0.12em] text-neutral-950 uppercase transition active:scale-[0.98] hover:bg-white sm:text-sm"
 								>
 									<span>{isSubmitting ? 'Please wait...' : 'Verify OTP'}</span>
 									<ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
@@ -149,7 +149,7 @@ export const ResetOtp = () => {
 						</div>
 					</div>
 
-					<div className="relative z-10 py-2 text-center text-[10px] tracking-widest text-neutral-600 uppercase">
+					<div className="auth-footer relative z-10 py-2 text-center text-[10px] tracking-widest text-neutral-600 uppercase">
 						© {new Date().getFullYear()} Hustle Friends Co. All rights reserved.
 					</div>
 				</div>

@@ -1,4 +1,5 @@
 import { Coffee as CoffeeIcon, Sparkles, Store } from 'lucide-react';
+import { Reveal } from '../components/effects/Reveal';
 
 export const Coffee = () => {
   return (
@@ -12,7 +13,7 @@ export const Coffee = () => {
       <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 lg:gap-16 items-center">
         
         {/* Left Column: Copywriting & Content Wrapper */}
-        <div className="order-1 lg:col-span-6 flex flex-col justify-between h-full space-y-6">
+        <Reveal className="order-1 lg:col-span-6 flex flex-col justify-between h-full space-y-6" direction="left">
           
           {/* Section 1: Title & Narrative (Mobile: Order 1) */}
           <div className="order-1 space-y-2 sm:space-y-3">
@@ -74,10 +75,10 @@ export const Coffee = () => {
 
           </div>
 
-        </div>
+        </Reveal>
 
         {/* Right Column: Image Collage Grid (Mobile: Order 2) */}
-        <div className="order-2 lg:order-2 lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4 my-2 lg:my-0">
+        <Reveal className="order-2 lg:order-2 lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4 my-2 lg:my-0" direction="right" delay={160}>
           
           {/* Left Sub-column */}
           <div className="space-y-3 sm:space-y-4 flex flex-col justify-between">
@@ -115,7 +116,7 @@ export const Coffee = () => {
             </div>
           </div>
 
-        </div>
+        </Reveal>
 
       </div>
     </section>

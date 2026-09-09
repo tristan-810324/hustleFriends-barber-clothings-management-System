@@ -79,19 +79,19 @@ export const Login = () => {
 	};
 
 	return (
-		<section className="relative h-dvh min-h-dvh w-full overflow-hidden bg-neutral-950 text-white selection:bg-[#C6A664] selection:text-neutral-950">
+		<section className="auth-page relative h-dvh min-h-dvh w-full overflow-hidden bg-neutral-950 text-white selection:bg-[#C6A664] selection:text-neutral-950">
 			<div className="grid h-full min-h-dvh grid-cols-1 lg:grid-cols-2">
 				{/* ================= LEFT SIDE: Hero Section (Desktop & Tablet Banner) ================= */}
 				<aside className="relative hidden flex-col justify-between p-8 sm:p-10 lg:flex lg:p-12 xl:p-14">
 					{/* Background Image & Overlay */}
 					<div
-						className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
+						className="auth-hero absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
 						style={{ backgroundImage: "url('/img/background.png')" }}
 					/>
 					<div className="absolute inset-0 bg-linear-to-t from-neutral-950 via-neutral-950/50 to-neutral-950/70" />
 
 					{/* Top Branding */}
-					<div className="relative z-10">
+					<div className="auth-branding relative z-10">
 						<a href="/" className="inline-block transition hover:opacity-80">
 							<img
 								src="/img/HustleLogoWhite.png"
@@ -102,7 +102,7 @@ export const Login = () => {
 					</div>
 
 					{/* Bottom Tagline */}
-					<div className="relative z-10">
+					<div className="auth-branding relative z-10">
 						<h1 className="text-4xl font-black leading-none tracking-tight uppercase sm:text-5xl xl:text-6xl">
 							Work Hard.<br />
 							<span className="text-[#C6A664]">Stay Sharp.</span>
@@ -121,7 +121,7 @@ export const Login = () => {
 					</div>
 
 					{/* Header / Navigation Bar for Form */}
-					<div className="relative z-10 flex items-center justify-between">
+					<div className="auth-navigation relative z-10 flex items-center justify-between">
 						{/* Back to Home Button */}
 						<a
 							href="/"
@@ -142,7 +142,7 @@ export const Login = () => {
 					</div>
 
 					{/* Login Form Container */}
-					<div className="relative z-10 mx-auto my-auto w-full max-w-md py-3 sm:py-4">
+					<div className="auth-form relative z-10 mx-auto my-auto w-full max-w-md py-3 sm:py-4">
 						<div className="p-1 sm:p-2">
 							<div className="mb-4 flex justify-center">
 								<img
@@ -243,7 +243,7 @@ export const Login = () => {
 
 								<button
 									type="submit"
-									className="group mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#C6A664] px-4 py-3 text-xs font-black tracking-[0.12em] text-neutral-950 uppercase transition active:scale-[0.98] hover:bg-white sm:text-sm"
+									className="auth-action group mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#C6A664] px-4 py-3 text-xs font-black tracking-[0.12em] text-neutral-950 uppercase transition active:scale-[0.98] hover:bg-white sm:text-sm"
 								>
 									<span>{isSubmitting ? 'Please wait...' : otpMode ? 'Verify and sign in' : 'Authorize Access'}</span>
 									<ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
@@ -260,7 +260,7 @@ export const Login = () => {
 					</div>
 
 					{/* Footer Copyright Notice */}
-					<div className="relative z-10 text-center text-[10px] tracking-widest text-neutral-600 uppercase">
+					<div className="auth-footer relative z-10 text-center text-[10px] tracking-widest text-neutral-600 uppercase">
 						© {new Date().getFullYear()} Hustle Friends Co. All rights reserved.
 					</div>
 				</div>

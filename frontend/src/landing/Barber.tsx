@@ -1,4 +1,5 @@
 import { Calendar, CheckCircle2 } from 'lucide-react';
+import { Reveal } from '../components/effects/Reveal';
 
 export const Barber = () => {
   return (
@@ -12,7 +13,7 @@ export const Barber = () => {
       <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 lg:gap-16 items-center">
         
         {/* Left Side: Image Layer (Desktop: Col 6, Mobile: Order 2) */}
-        <div className="order-2 lg:order-1 lg:col-span-6 relative w-full my-2 lg:my-0">
+        <Reveal className="order-2 lg:order-1 lg:col-span-6 relative w-full my-2 lg:my-0" direction="left">
           <div className="relative w-full h-80 sm:h-96 md:h-120 lg:h-125 rounded-2xl sm:rounded-3xl overflow-hidden border border-neutral-200 shadow-2xl">
             <img
               src="/img/barber3.png"
@@ -32,10 +33,10 @@ export const Barber = () => {
               Precision fades and classic grooming tailored for the modern professional.
             </p>
           </div>
-        </div>
+        </Reveal>
 
         {/* Right Side Column Container (Desktop: Col 6, Mobile: Flex Display) */}
-        <div className="order-1 lg:order-2 lg:col-span-6 flex flex-col w-full">
+        <Reveal className="order-1 lg:order-2 lg:col-span-6 flex flex-col w-full" direction="right" delay={160}>
           
           {/* Section 1: Title & Description (Mobile: Order 1) */}
           <div className="order-1 space-y-2 sm:space-y-3">
@@ -83,7 +84,7 @@ export const Barber = () => {
 
           </div>
 
-        </div>
+        </Reveal>
 
       </div>
     </section>

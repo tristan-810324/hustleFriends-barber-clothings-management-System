@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Phone, MapPin, Share2, ExternalLink, Navigation } from 'lucide-react';
+import { Reveal } from '../components/effects/Reveal';
 
 export const Contact = () => {
   const [formData, setFormData] = useState({
@@ -19,19 +20,19 @@ export const Contact = () => {
     <section id="contact" className="relative bg-white text-neutral-900 py-12 md:py-20 px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
       
       {/* Centered Section Header */}
-      <div className="max-w-4xl mx-auto text-center space-y-2 sm:space-y-3 mb-8 md:mb-12 relative z-10">
+      <Reveal className="max-w-4xl mx-auto text-center space-y-2 sm:space-y-3 mb-8 md:mb-12 relative z-10">
         <span className="text-xs font-black tracking-[0.25em] text-[#C6A664] uppercase block">
           CONNECT WITH US
         </span>
         <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-[0.95] text-neutral-950">
           START THE <span className="text-neutral-800">CONVERSATION.</span>
         </h2>
-      </div>
+      </Reveal>
 
       <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 lg:items-stretch">
         
         {/* Left Column: Interactive Contact Form */}
-        <div className="order-2 lg:order-1 lg:col-span-7 bg-neutral-50/80 backdrop-blur-xl border border-neutral-200 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-lg w-full flex flex-col justify-between">
+        <Reveal className="order-2 lg:order-1 lg:col-span-7 bg-neutral-50/80 backdrop-blur-xl border border-neutral-200 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-lg w-full flex flex-col justify-between" direction="left">
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 h-full flex flex-col justify-between">
             
             <div className="space-y-4 sm:space-y-5">
@@ -124,10 +125,10 @@ export const Contact = () => {
             </button>
 
           </form>
-        </div>
+        </Reveal>
 
         {/* Right Column: Contact Cards & Google Maps Container */}
-        <div className="order-1 lg:order-2 lg:col-span-5 flex flex-col justify-between gap-3 sm:gap-3.5 w-full h-full">
+        <Reveal className="order-1 lg:order-2 lg:col-span-5 flex flex-col justify-between gap-3 sm:gap-3.5 w-full h-full" direction="right" delay={160}>
           
           {/* Card 1: Mobile Number */}
           <div className="bg-linear-to-br from-neutral-50 via-white to-neutral-100/60 backdrop-blur-xl border border-neutral-200/90 hover:border-[#C6A664]/60 rounded-2xl p-3.5 sm:p-4 flex items-start gap-3.5 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 group">
@@ -230,7 +231,7 @@ export const Contact = () => {
             </div>
           </div>
 
-        </div>
+        </Reveal>
 
       </div>
     </section>

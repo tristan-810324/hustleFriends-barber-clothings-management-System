@@ -1,4 +1,5 @@
 import { MapPin, ArrowUpRight } from 'lucide-react';
+import { Reveal } from '../components/effects/Reveal';
 
 export const Products = () => {
   return (
@@ -12,7 +13,7 @@ export const Products = () => {
       <div className="max-w-7xl mx-auto relative z-10 space-y-8 md:space-y-10">
         
         {/* Top Header Row */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-8 pb-6 border-b border-neutral-200">
+        <Reveal className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-8 pb-6 border-b border-neutral-200">
           <div className="space-y-2">
             <span className="text-[11px] font-black tracking-[0.25em] text-[#C6A664] uppercase block">
               CONCEPT STORE
@@ -30,10 +31,10 @@ export const Products = () => {
               Available strictly for in-store purchases. Visit our concept shop to fit and buy our exclusive streetwear drops and premium grooming kits.
             </p>
           </div>
-        </div>
+        </Reveal>
 
         {/* Collection Showcase Cards - Fixed Tablet Responsiveness */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        <Reveal className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8" delay={120}>
           
           {/* Main Streetwear Collection Banner */}
           <div className="relative min-h-105 md:min-h-120 lg:min-h-130 rounded-2xl sm:rounded-3xl overflow-hidden border border-neutral-200 shadow-lg hover:shadow-2xl group flex flex-col justify-between p-6 sm:p-8 transition-all duration-500">
@@ -117,7 +118,7 @@ export const Products = () => {
             </div>
           </div>
 
-        </div>
+        </Reveal>
 
       </div>
     </section>
