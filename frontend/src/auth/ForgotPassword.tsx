@@ -2,12 +2,14 @@ import { ArrowLeft, ArrowRight, Mail } from 'lucide-react';
 import React, { useState } from 'react';
 import { authApi } from './api';
 import { getAuthErrorMessage } from './authMessages';
+import { AuthLoadingScreen } from './AuthLoadingScreen';
 
 export const ForgotPassword = () => {
 	const [email, setEmail] = useState('');
 	const [error, setError] = useState('');
 	const [message, setMessage] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isMovingToOtp, setIsMovingToOtp] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -18,9 +20,12 @@ export const ForgotPassword = () => {
 		try {
 			await authApi.forgotPassword({ email });
 			sessionStorage.setItem('resetEmail', email);
-			setMessage('If an account exists for that email, reset instructions have been sent.');
-			window.history.replaceState({ resetEmail: email }, '', window.location.href);
-			window.location.hash = '#reset-otp';
+			setIsMovingToOtp(true);
+			window.setTimeout(() => {
+				setMessage('If an account exists for that email, reset instructions have been sent.');
+				window.history.replaceState({ resetEmail: email }, '', window.location.href);
+				window.location.hash = '#reset-otp';
+			}, 850);
 		} catch (submissionError) {
 			sessionStorage.removeItem('resetEmail');
 			setError(getAuthErrorMessage(submissionError, 'We could not start the password reset. Please try again.'));
@@ -28,6 +33,16 @@ export const ForgotPassword = () => {
 			setIsSubmitting(false);
 		}
 	};
+
+	if (isSubmitting || isMovingToOtp) {
+		return (
+			<AuthLoadingScreen
+				eyebrow="Account recovery"
+				title={isMovingToOtp ? 'Code is on the way' : 'Starting secure recovery'}
+				description={isMovingToOtp ? 'We sent a one-time code. Taking you to the secure verification step now.' : 'Checking your request and preparing a secure reset session.'}
+			/>
+		);
+	}
 
 	return (
 		<section className="auth-page relative min-h-screen w-full overflow-x-hidden bg-neutral-950 text-white selection:bg-[#C6A664] selection:text-neutral-950">

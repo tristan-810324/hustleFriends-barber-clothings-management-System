@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import React, { useState } from 'react';
 import { authApi } from './api';
 import { getAuthErrorMessage } from './authMessages';
+import { AuthLoadingScreen } from './AuthLoadingScreen';
 
 const GoogleIcon = () => (
 	<svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 shrink-0" role="img">
@@ -77,6 +78,16 @@ export const Login = () => {
 			setIsResending(false);
 		}
 	};
+
+	if (isSubmitting) {
+		return (
+			<AuthLoadingScreen
+				eyebrow="Hustle Friends"
+				title={otpMode ? 'Verifying your email' : 'Signing you in'}
+				description={otpMode ? 'We are confirming your code and preparing your account.' : 'Securely checking your details and opening your workspace.'}
+			/>
+		);
+	}
 
 	return (
 		<section className="auth-page relative h-dvh min-h-dvh w-full overflow-hidden bg-neutral-950 text-white selection:bg-[#C6A664] selection:text-neutral-950">

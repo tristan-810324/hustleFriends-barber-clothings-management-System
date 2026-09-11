@@ -15,7 +15,7 @@ async function main() {
   const staff = await prisma.user.upsert({
     where: { email: 'staff@hustlefriends.com' },
     update: { role: Role.STAFF, isVerified: true, isActive: true },
-    create: { email: 'staff@hustlefriends.com', fullName: 'Senior Barber', passwordHash: staffPassword, role: Role.STAFF, isVerified: true }
+    create: { email: 'staff@hustlefriends.com', fullName: 'Main staff', passwordHash: staffPassword, role: Role.STAFF, isVerified: true }
   });
 
   console.log(`Seeded owner: ${owner.email}`);

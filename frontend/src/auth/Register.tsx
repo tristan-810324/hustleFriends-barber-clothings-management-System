@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { authApi } from './api';
 import { getAuthErrorMessage } from './authMessages';
@@ -37,6 +37,8 @@ export const Register = () => {
 	const [message, setMessage] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isResending, setIsResending] = useState(false);
+	const [isMovingToOtp, setIsMovingToOtp] = useState(false);
+	const [isVerified, setIsVerified] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -47,12 +49,16 @@ export const Register = () => {
 		try {
 			if (otpMode) {
 				await authApi.verifyOtp({ email, otp });
-				setMessage('Email verified. You can now sign in.');
-				window.location.hash = '#login';
+				setIsVerified(true);
+				return;
 			} else {
 				await authApi.register({ fullName, email, password });
-				setOtpMode(true);
-				setMessage('Verification code sent. Check your email.');
+				setIsMovingToOtp(true);
+				window.setTimeout(() => {
+					setOtpMode(true);
+					setIsMovingToOtp(false);
+					setMessage('Verification code sent. Check your email.');
+				}, 750);
 			}
 		} catch (submissionError) {
 			setError(getAuthErrorMessage(submissionError, 'We could not create your account. Please try again.'));
@@ -60,6 +66,50 @@ export const Register = () => {
 			setIsSubmitting(false);
 		}
 	};
+
+	if (isMovingToOtp) {
+		return (
+			<section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-neutral-950 px-6 text-white selection:bg-[#C6A664] selection:text-neutral-950">
+			<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(198,166,100,0.16),transparent_34%),linear-gradient(135deg,#09090b_0%,#171512_52%,#09090b_100%)]" />
+			<div className="relative w-full max-w-md text-center">
+				<div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-[#C6A664]/30 bg-[#C6A664]/10 shadow-[0_0_60px_rgba(198,166,100,0.18)]">
+					<div className="h-8 w-8 animate-spin rounded-full border-2 border-neutral-700 border-t-[#C6A664]" aria-hidden="true" />
+				</div>
+				<p className="mt-8 text-[11px] font-black tracking-[0.35em] text-[#C6A664] uppercase">Hustle Friends</p>
+				<h1 className="mt-3 text-2xl font-black tracking-tight sm:text-3xl">Securing your account</h1>
+				<p className="mt-3 text-sm leading-6 text-neutral-400">Your profile is ready. We are sending a verification code to your email.</p>
+				<div className="mx-auto mt-8 h-1 max-w-xs overflow-hidden rounded-full bg-neutral-800" aria-label="Preparing email verification">
+					<div className="h-full w-2/3 animate-[loading-progress_750ms_ease-in-out_infinite] rounded-full bg-[#C6A664]" />
+				</div>
+			</div>
+		</section>
+		);
+	}
+
+	if (isVerified) {
+		return (
+			<section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-neutral-950 px-6 text-white selection:bg-[#C6A664] selection:text-neutral-950">
+			<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(198,166,100,0.16),transparent_34%),linear-gradient(135deg,#09090b_0%,#171512_52%,#09090b_100%)]" />
+			<div className="relative w-full max-w-lg text-center">
+				<div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10 shadow-[0_0_60px_rgba(52,211,153,0.12)]">
+					<Check className="text-emerald-400" size={38} strokeWidth={2.5} />
+				</div>
+				<p className="mt-8 text-[11px] font-black tracking-[0.35em] text-[#C6A664] uppercase">Account verified</p>
+				<h1 className="mt-3 text-2xl font-black tracking-tight sm:text-4xl">You are ready to sign in.</h1>
+				<p className="mx-auto mt-4 max-w-md text-sm leading-6 text-neutral-400">Your Hustle Friends account is active. Sign in using the email and password you just created.</p>
+				<div className="mt-8 grid gap-3 sm:grid-cols-2">
+					<a href="#login" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#C6A664] px-5 py-3 text-sm font-black text-neutral-950 transition hover:bg-white">
+						Sign in now <ArrowRight size={16} />
+					</a>
+					<button type="button" onClick={() => { setIsVerified(false); setOtpMode(true); setOtp(''); setMessage('Your account is verified. You can sign in whenever you are ready.'); }} className="rounded-xl border border-neutral-700 px-5 py-3 text-sm font-semibold text-neutral-200 transition hover:border-[#C6A664] hover:text-white">
+						Stay here
+					</button>
+				</div>
+				<p className="mt-6 text-xs text-neutral-500">Need another account? <a href="#register" className="text-[#C6A664] hover:text-white">Register again</a></p>
+			</div>
+		</section>
+		);
+	}
 
 	const handleResend = async () => {
 		setError('');

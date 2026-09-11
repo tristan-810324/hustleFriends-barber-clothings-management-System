@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import React, { useState } from 'react';
 import { authApi } from './api';
 import { getAuthErrorMessage } from './authMessages';
+import { AuthLoadingScreen } from './AuthLoadingScreen';
 
 export const ResetOtp = () => {
 	const [otp, setOtp] = useState('');
@@ -9,6 +10,7 @@ export const ResetOtp = () => {
 	const [message, setMessage] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isResending, setIsResending] = useState(false);
+	const [isMovingToPassword, setIsMovingToPassword] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -20,14 +22,27 @@ export const ResetOtp = () => {
 			const email = sessionStorage.getItem('resetEmail');
 			if (!email) throw new Error('Reset session expired. Please request a new code.');
 			await authApi.verifyResetOtp({ email, otp });
-			setMessage('OTP verified. Continue to create a new password.');
-			window.location.hash = '#reset-password';
+			setIsMovingToPassword(true);
+			window.setTimeout(() => {
+				setMessage('OTP verified. Continue to create a new password.');
+				window.location.hash = '#reset-password';
+			}, 850);
 		} catch (submissionError) {
 			setError(getAuthErrorMessage(submissionError, 'We could not verify that code. Please try again.'));
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
+
+	if (isSubmitting || isMovingToPassword) {
+		return (
+			<AuthLoadingScreen
+				eyebrow="Security check"
+				title={isMovingToPassword ? 'Code verified' : 'Checking your code'}
+				description={isMovingToPassword ? 'Your reset session is secure. Taking you to create a new password.' : 'We are securely verifying your one-time code.'}
+			/>
+		);
+	}
 
 	const handleResend = async () => {
 		setError('');

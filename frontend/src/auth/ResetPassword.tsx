@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock } from 'lucide-react';
 import React, { useState } from 'react';
 import { authApi } from './api';
 import { getAuthErrorMessage } from './authMessages';
+import { AuthLoadingScreen } from './AuthLoadingScreen';
 
 export const ResetPassword = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -11,6 +12,7 @@ export const ResetPassword = () => {
 	const [error, setError] = useState('');
 	const [message, setMessage] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isMovingToLogin, setIsMovingToLogin] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -29,14 +31,24 @@ export const ResetPassword = () => {
 			if (!email) throw new Error('Reset session expired. Please request a new code.');
 			await authApi.resetPassword({ email, password });
 			sessionStorage.removeItem('resetEmail');
-			setMessage('Password updated. Redirecting to login...');
-			setTimeout(() => { window.location.hash = '#login'; }, 1000);
+			setIsMovingToLogin(true);
+			window.setTimeout(() => { window.location.hash = '#login'; }, 1000);
 		} catch (submissionError) {
 			setError(getAuthErrorMessage(submissionError, 'We could not update your password. Please try again.'));
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
+
+	if (isSubmitting || isMovingToLogin) {
+		return (
+			<AuthLoadingScreen
+				eyebrow="Password updated"
+				title="Your account is secure"
+				description="Your new password is ready. Taking you back to login so you can continue." 
+			/>
+		);
+	}
 
 	return (
 		<section className="auth-page relative min-h-screen w-full overflow-x-hidden bg-neutral-950 text-white selection:bg-[#C6A664] selection:text-neutral-950">
