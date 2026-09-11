@@ -12,7 +12,7 @@ Di tulad ng pampublikong Client Registration (na dumadaan sa 6-digit OTP verific
 
 Upang mapanatili ang mataas na antas ng seguridad at integridad sa negosyo, ang mga accounts na ito ay binubuo at pinamamahalaan gamit ang **Enterprise Onboarding Strategy**:
 1. **Initial Bootstrap via Database Seeding (`seed.ts`)**: Para sa paunang Master Owner account at default test staff.
-2. **Owner-Initiated Staff Provisioning**: Ang paglikha ng mga bagong Barber o Cashier account ay eksklusibong ginagawa ng Owner mula sa Management Console (`/owner/staff`).
+2. **Owner-Initiated Staff Provisioning**: Ang paglikha ng mga bagong Barber o Cashier account ay eksklusibong ginagawa ng Owner mula sa Management Console (`#owner`); ang backend API nito ay `/api/owner/staff`.
 3. **Owner Admin Password Reset Override**: Diretso at mabilis na mapapalitan ng Owner ang password ng sinumang Staff mula mismo sa Owner Dashboard.
 
 ---
@@ -22,7 +22,7 @@ Upang mapanatili ang mataas na antas ng seguridad at integridad sa negosyo, ang 
 | Feature / Attribute | Client Account | Staff Account | Owner Account |
 | :--- | :--- | :--- | :--- |
 | **Account Creation Source** | Public Registration (`/register`) | Owner Panel (`POST /api/owner/staff`) | Prisma Database Seed / System Setup |
-| **Email OTP Verification** | Required bago makapag-login | Pre-verified upon creation (`isVerified: true`) | Pre-verified (`isVerified: true`) |
+| **Email OTP Verification** | Required bago makapag-login | Seeded Staff is pre-verified; Owner-created Staff starts unverified and requires OTP | Pre-verified (`isVerified: true`) |
 | **Default Password** | User-defined | Owner-assigned Temporary Password | System/Seed-defined Password |
 | **Password Management** | Self-service via OTP | Owner Override Dashboard / Self-service OTP | Self-service via OTP |
 | **Allowed Dashboard Access** | Client Portal (`#client`) | Staff POS & Schedules (`#staff`) | Full Owner Management Console (`#owner`) |
@@ -54,7 +54,7 @@ async function main() {
     create: {
       email: 'owner@hustlefriends.com',
       fullName: 'Master Owner',
-      password: ownerPassword,
+      passwordHash: ownerPassword,
       role: Role.OWNER,
       isVerified: true,
     },
@@ -67,15 +67,15 @@ async function main() {
     create: {
       email: 'staff@hustlefriends.com',
       fullName: 'Senior Barber',
-      password: staffPassword,
+      passwordHash: staffPassword,
       role: Role.STAFF,
-      isVerified: true,
+      isVerified: false,
     },
   });
 
   console.log('✅ Real-world Seed Completed Successfully:');
-  console.log(` 👑 Owner Account: ${owner.email}`);
-  console.log(` 💈 Staff Account: ${staff.email}`);
+  console.log(`  Owner Account: ${owner.email}`);
+  console.log(`  Staff Account: ${staff.email}`);
 }
 
 main()
@@ -108,7 +108,7 @@ Request: Magsusumite ang Owner ng form sa /owner/staff na naglalaman ng fullName
 
 Authorization: Haharangin ng authMiddleware at roleMiddleware(['OWNER']) ang sinumang hindi Owner.
 
-Creation: Isasave ang Staff record sa database na may role: 'STAFF' at isVerified: true.
+Creation: Isasave ang bagong Owner-created Staff record sa database na may role: 'STAFF' at isVerified: false. Magpapadala ng OTP para sa unang login; magiging verified lang pagkatapos ng tamang OTP. Ang default seeded Staff account ay trusted bootstrap data at isVerified: true.
 
 Endpoint Specs:
 

@@ -2,17 +2,22 @@ import { useEffect, useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/footer';
 
+// For landding pages components
 import { Hero } from './landing/hero';
 import { Barber } from './landing/Barber';
 import { Products } from './landing/Products';
 import { Coffee } from './landing/Coffee';
 import { Contact } from './landing/Contact';
+
+// For auth components
 import Login from './auth/Login';
 import Register from './auth/Register';
 import ForgotPassword from './auth/ForgotPassword';
 import ResetOtp from './auth/ResetOtp';
 import ResetPassword from './auth/ResetPassword';
 import ClientDashboard from './client/ClientDashboard';
+import OwnerDashboard from './owner/OwnerDashboard';
+import StaffDashboard from './staff/StaffDashboard';
 
 const getCurrentView = () => {
   if (window.location.hash === '#login') return 'login';
@@ -21,6 +26,8 @@ const getCurrentView = () => {
   if (window.location.hash === '#reset-otp') return 'reset-otp';
   if (window.location.hash === '#reset-password') return 'reset-password';
   if (window.location.hash === '#client') return 'client';
+  if (window.location.hash === '#owner') return 'owner';
+  if (window.location.hash === '#staff') return 'staff';
   return 'home';
 };
 
@@ -58,6 +65,14 @@ function App() {
 
   if (currentView === 'client') {
     return <ClientDashboard email={window.sessionStorage.getItem('clientEmail') ?? 'verified client'} />;
+  }
+
+  if (currentView === 'owner') {
+    return <OwnerDashboard />;
+  }
+
+  if (currentView === 'staff') {
+    return <StaffDashboard />;
   }
 
   return (

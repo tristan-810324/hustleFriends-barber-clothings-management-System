@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { config } from './config.js';
 import { authRouter } from './auth.routes.js';
+import { ownerRouter } from './owner.routes.js';
 
 const app = express();
 app.disable('x-powered-by');
@@ -22,6 +23,7 @@ app.use(cors({
 app.use(express.json({ limit: '20kb' }));
 app.use(cookieParser());
 app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 50, standardHeaders: true, legacyHeaders: false }), authRouter);
+app.use('/api/owner', ownerRouter);
 app.get('/health', (_request, response) => response.json({ status: 'ok' }));
 app.use((_request, response) => response.status(404).json({ error: 'Not found' }));
 app.use((error: unknown, _request: express.Request, response: express.Response, _next: express.NextFunction) => {

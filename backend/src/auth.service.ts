@@ -32,6 +32,10 @@ export async function resendVerificationOtp(email: string) {
   await issueOtp(user.id, user.email, OtpPurpose.REGISTRATION);
 }
 
+export async function issueVerificationOtp(userId: string, email: string) {
+  await issueOtp(userId, email, OtpPurpose.REGISTRATION);
+}
+
 export async function register(input: { fullName: string; email: string; password: string }) {
   const passwordHash = await hashSecret(input.password);
   const existing = await prisma.user.findUnique({ where: { email: input.email } });

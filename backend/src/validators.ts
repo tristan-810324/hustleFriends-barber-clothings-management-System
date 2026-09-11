@@ -15,3 +15,9 @@ export const emailSchema = z.object({ email }).strict();
 export const loginSchema = z.object({ email, password }).strict();
 export const forgotPasswordSchema = z.object({ email }).strict();
 export const resetPasswordSchema = z.object({ email, token: z.string().min(32).max(128), password }).strict();
+export const createStaffSchema = z.object({
+  fullName: z.string().trim().min(2).max(100),
+  email,
+  password
+}).strict();
+export const resetStaffPasswordSchema = z.object({ newPassword: password }).strict();

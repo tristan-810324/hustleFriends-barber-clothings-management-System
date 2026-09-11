@@ -6,6 +6,7 @@
 
 - [Architecture](#architecture)
 - [Implemented Auth Flows](#implemented-auth-flows)
+- [Owner and Staff Management](#owner-and-staff-management)
 - [Files Added or Updated](#files-added-or-updated)
 - [Environment Setup](#environment-setup)
 - [Database Setup](#database-setup)
@@ -57,6 +58,48 @@
 
 Google account existence is not queried. The check is against the Hustle Friends PostgreSQL `User` table.
 
+## Owner and Staff Management
+
+### Seeded Accounts
+
+The Prisma seed creates the initial Owner and Staff accounts. Both bootstrap accounts are pre-verified. Only Staff accounts created later by the Owner start unverified and must complete OTP verification on first login.
+
+| Role | Email | Default password | First-login OTP |
+| --- | --- | --- | --- |
+| Owner | `owner@hustlefriends.com` | `OwnerSecure123!` | Not required |
+| Staff | `staff@hustlefriends.com` | Value from `SEED_STAFF_PASSWORD` or the current seed default | Not required for the seeded bootstrap account |
+
+The seed supports these optional environment overrides:
+
+```dotenv
+SEED_OWNER_PASSWORD="replace-with-a-development-password"
+SEED_STAFF_PASSWORD="replace-with-a-development-password"
+```
+
+Passwords are never stored in plain text. The seed hashes them before writing to the `passwordHash` column. These default credentials are for local development only and must be changed or overridden outside local development.
+
+### Owner Staff Provisioning
+
+Only an authenticated `OWNER` can access the staff management API. The frontend Owner Console is available at `#owner`; its API base is `/api/owner`.
+
+1. The Owner submits `fullName`, `email`, and a temporary `password` from the Owner Console.
+2. The backend creates a `STAFF` user with `isVerified=false`.
+3. The backend issues a six-digit registration OTP for the Staff email.
+4. In development without SMTP, the OTP is printed in the backend terminal. With SMTP configured, it is sent by email.
+5. The Staff logs in with the temporary password, enters the OTP, and is redirected to `#staff` after successful verification.
+
+Implemented endpoints:
+
+- `GET /api/owner/staff`: list Staff accounts.
+- `POST /api/owner/staff`: create a Staff account and issue its first-login OTP.
+- `PATCH /api/owner/staff/:id/reset-password`: Owner-only Staff password override.
+
+The Owner reset-password action hashes the new password with bcrypt. It currently uses a browser prompt in the Owner Console; a dedicated modal form can be added later for a more polished workflow.
+
+### Staff Access
+
+The backend verifies the JWT cookie and role on every protected Owner request. A Staff account cannot access Owner endpoints. After OTP verification, Staff login redirects to `#staff`, which currently contains the authenticated Staff landing screen. POS, appointments, schedules, and inventory are not implemented yet.
+
 ## Files Added or Updated
 
 ### Backend
@@ -72,6 +115,9 @@ Google account existence is not queried. The check is against the Hustle Friends
 - `backend/src/auth.service.ts`: registration, OTP, login, and reset business logic.
 - `backend/src/auth.middleware.ts`: JWT cookie authentication and role middleware.
 - `backend/src/auth.routes.ts`: auth API endpoints.
+- `backend/src/owner.service.ts`: Owner staff listing, creation, and password override logic.
+- `backend/src/owner.routes.ts`: Owner-only staff management endpoints.
+- `backend/prisma/seed.ts`: local Owner and Staff bootstrap accounts.
 - `backend/src/server.ts`: Express, Helmet, CORS, rate limiting, and error handling.
 - `backend/prisma/schema.prisma`: `User`, `Otp`, `PasswordReset`, and role/purpose enums.
 - `backend/prisma/migrations/20260906074215_auth_foundation/migration.sql`: applied auth migration.
@@ -86,7 +132,9 @@ Google account existence is not queried. The check is against the Hustle Friends
 - `frontend/src/auth/ResetOtp.tsx`: reset OTP verification and resend.
 - `frontend/src/auth/ResetPassword.tsx`: password update form.
 - `frontend/src/client/ClientDashboard.tsx`: authenticated client proof screen.
-- `frontend/src/App.tsx`: hash view routing including `#client`.
+- `frontend/src/owner/OwnerDashboard.tsx`: Owner staff creation, staff list, and password reset UI.
+- `frontend/src/staff/StaffDashboard.tsx`: verified Staff landing screen.
+- `frontend/src/App.tsx`: hash view routing for `#client`, `#owner`, and `#staff`.
 - `frontend/vite.config.ts`: local API proxy and host configuration.
 
 ## Environment Setup
@@ -218,6 +266,22 @@ Create/apply the local database migration after PostgreSQL is running:
 npm run prisma:migrate -- --name auth-foundation
 ```
 
+Seed the local Owner and Staff bootstrap accounts:
+
+```powershell
+cd backend
+npx prisma db seed
+```
+
+To completely reset a development database, reapply migrations, and run the seed:
+
+```powershell
+cd backend
+npx prisma migrate reset --force
+```
+
+This is destructive. It deletes all existing Client, Staff, Owner, OTP, and password-reset records before recreating the schema and seeded accounts. Never run it against a production database.
+
 Start the API:
 
 ```powershell
@@ -272,6 +336,9 @@ The UI never intentionally displays raw technical error codes.
 - `POST /api/auth/verify-reset-otp`
 - `POST /api/auth/reset-password`
 - `GET /api/auth/me`
+- `GET /api/owner/staff` (Owner only)
+- `POST /api/owner/staff` (Owner only)
+- `PATCH /api/owner/staff/:id/reset-password` (Owner only)
 - `GET /health`
 
 ## Validation Performed
@@ -295,6 +362,10 @@ Additional runtime checks passed during implementation:
 GET /health -> 200 {"status":"ok"}
 Registration through the Vite proxy -> 201
 Unverified login -> 403 with a new OTP message
+Owner login -> redirects to #owner
+Owner staff creation -> 201 and first-login OTP issued
+Staff OTP verification -> redirects to #staff
+Owner staff password reset -> 200
 Resend registration OTP -> 200
 Forgot password for an unknown email -> 404 in local development
 Forgot password for a registered email -> 200
@@ -332,6 +403,14 @@ The frontend uses the Vite proxy configured in `frontend/vite.config.ts`, forwar
 - Restart the backend after editing `backend/.env`.
 - The test subject `Hustle Friends SMTP test` is not the real OTP. A registration OTP uses `Verify your Hustle Friends account`.
 
+For an Owner-created Staff account, first confirm that the backend terminal contains a line like:
+
+```text
+[development OTP] verification code for staff@example.com: 123456
+```
+
+If the line is absent, confirm the Owner request returned `201`, the backend is running on port `4000`, and the Staff email is valid. If SMTP is configured, check the recipient's Inbox, Spam, Promotions, and All Mail folders.
+
 ### `DATABASE_URL` editor warning
 
 Keep this in `backend/prisma/schema.prisma`:
@@ -355,4 +434,4 @@ The actual connection string belongs in `backend/.env`. Validate it from `backen
 
 ## Remaining Work
 
-This change implements the authentication foundation only. The larger master prompt still requires booking, POS, inventory, staff scheduling, notifications, audit logs, full RBAC route coverage, and automated auth tests. Those features need their own Prisma models, services, routes, and tests before the complete enterprise platform is considered done.
+The authentication and Owner-to-Staff onboarding flow is implemented. The larger platform still requires booking, POS, inventory, staff scheduling, notifications, audit logs, full RBAC route coverage for future business resources, and automated auth tests. The Staff dashboard is currently a verified landing screen rather than a complete POS or scheduling workspace.
