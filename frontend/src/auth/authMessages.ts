@@ -22,3 +22,4 @@ export function getAuthErrorMessage(error: unknown, fallback = 'Something went w
 	}
 	return messages[error.message] ?? error.message ?? fallback;
 }
+	
