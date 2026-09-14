@@ -46,12 +46,14 @@ export const Login = () => {
 				await authApi.verifyOtp({ email, otp });
 				const { user } = await authApi.login({ email, password });
 				window.sessionStorage.setItem('clientEmail', user.email);
+				window.sessionStorage.setItem('clientUsername', user.fullName);
 				setMessage('Email verified. Signing you in...');
 				window.location.hash = user.role === 'OWNER' ? '#owner' : user.role === 'STAFF' ? '#staff' : '#client';
 				return;
 			}
 			const { user } = await authApi.login({ email, password });
 			window.sessionStorage.setItem('clientEmail', user.email);
+			window.sessionStorage.setItem('clientUsername', user.fullName);
 			window.location.hash = user.role === 'OWNER' ? '#owner' : user.role === 'STAFF' ? '#staff' : '#client';
 		} catch (submissionError) {
 			const submissionMessage = getAuthErrorMessage(submissionError, 'We could not sign you in. Please try again.');

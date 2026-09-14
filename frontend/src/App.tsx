@@ -117,7 +117,7 @@ function App() {
   }
 
   if (currentView === 'client') {
-    return <ClientDashboard email={window.sessionStorage.getItem('clientEmail') ?? 'verified client'} />;
+    return <ClientDashboard username={window.sessionStorage.getItem('clientUsername') ?? 'verified client'} />;
   }
 
   if (currentView === 'owner') {
