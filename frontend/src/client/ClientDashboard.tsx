@@ -1,11 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowRight,
   Bell,
   CalendarCheck2,
   CalendarDays,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
+  HelpCircle,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -77,6 +79,9 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
   const [isNotifMenuOpen, setIsNotifMenuOpen] = useState(false);
   const [notice, setNotice] = useState('');
 
+  const notifRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+
   const memberName = useMemo(() => {
     return username ? username.trim() : 'Member';
   }, [username]);
@@ -86,6 +91,37 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
   }, [memberName]);
 
   const memberSince = useMemo(() => new Date().getFullYear(), []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setIsNotifMenuOpen(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsNotifMenuOpen(false);
+        setIsProfileMenuOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  const closeAllDropdowns = () => {
+    setIsNotifMenuOpen(false);
+    setIsProfileMenuOpen(false);
+  };
 
   const handleLogout = async () => {
     setError('');
@@ -104,8 +140,7 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
     setNotice(message);
     window.setTimeout(() => setNotice(''), 3000);
     setIsSidebarOpen(false);
-    setIsProfileMenuOpen(false);
-    setIsNotifMenuOpen(false);
+    closeAllDropdowns();
   };
 
   // 🌟 Pro-Designer Modern Sidebar Structure
@@ -116,8 +151,7 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
         <button
           type="button"
           onClick={() => {
-            setIsProfileMenuOpen(false);
-            setIsNotifMenuOpen(false);
+            closeAllDropdowns();
           }}
           className="group rounded-xl p-1 transition-all duration-300 hover:bg-zinc-50 active:scale-95"
           aria-label="Hustle Friends home"
@@ -150,21 +184,21 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
         <MenuItem icon={ReceiptText} label="Transactions" onClick={() => showNotice('No transactions to display.')} />
         <MenuItem icon={Sparkles} label="Lookbook" onClick={() => showNotice('The lookbook is coming soon.')} />
 
-        <SectionLabel>Profile settings</SectionLabel>
-        <MenuItem icon={Settings} label="Settings" onClick={() => showNotice('Profile settings will be available here soon.')} />
+        <SectionLabel>Support</SectionLabel>
+        <MenuItem icon={HelpCircle} label="Help & Support" onClick={() => showNotice('Support center coming soon.')} />
       </nav>
 
-      {/* Modern Sign Out Action */}
+      {/* Modern Sidebar Bottom Member Card */}
       <div className="border-t border-zinc-100 p-4">
-        <button
-          type="button"
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          className="group flex w-full items-center justify-center gap-2.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50 px-4 py-3 text-center text-[10px] font-bold tracking-[0.18em] text-zinc-600 uppercase transition-all duration-200 hover:border-red-200 hover:bg-red-50/60 hover:text-red-600 disabled:cursor-wait disabled:opacity-60"
-        >
-          <LogOut size={15} strokeWidth={2} className="transition-transform duration-200 group-hover:-translate-x-0.5" />
-          <span>{isLoggingOut ? 'Signing out...' : 'Sign out'}</span>
-        </button>
+        <div className="flex items-center gap-3 rounded-2xl bg-zinc-50/80 border border-zinc-200/60 p-3 transition-colors hover:bg-zinc-100/60">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-950 text-xs font-black text-[#c7a65e] shadow-sm">
+            {userInitial}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="truncate text-xs font-black uppercase text-zinc-900 tracking-tight">{memberName}</p>
+            <p className="text-[9px] font-bold text-[#b08b3a] tracking-widest uppercase">Standard Member</p>
+          </div>
+        </div>
       </div>
     </aside>
   );
@@ -183,58 +217,64 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
             onClick={() => setIsSidebarOpen(false)} 
             aria-label="Close navigation overlay" 
           />
-          <div className="relative h-full w-72 animate-in slide-in-from-left duration-500 ease-out">{sidebar}</div>
+          <div className="relative h-full w-72">{sidebar}</div>
         </div>
       )}
 
       <div className="min-h-screen lg:ml-72">
-        {/* Modern Nav Bar */}
-        <header className="sticky top-0 z-30 flex h-16 sm:h-20 items-center justify-between border-b border-zinc-200/80 bg-white/80 backdrop-blur-md px-4 sm:px-8 lg:px-12 transition-all">
-          <div className="flex items-center gap-3">
+        {/* Modernized Mobile-First Header Bar */}
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-zinc-200/70 bg-white/85 px-3.5 backdrop-blur-lg transition-all sm:h-20 sm:px-8 lg:px-12">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               type="button"
               onClick={() => setIsSidebarOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100 text-zinc-800 transition-all duration-300 hover:bg-zinc-200 active:scale-90 active:bg-[#c7a65e]/20 lg:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-2xl border border-zinc-200/80 bg-zinc-50/80 text-zinc-800 shadow-xs transition-all duration-200 hover:bg-zinc-100 active:scale-95 lg:hidden"
               aria-label="Open navigation"
               aria-expanded={isSidebarOpen}
             >
-              <Menu size={19} className="transition-transform duration-300 active:rotate-90" />
+              <Menu size={18} strokeWidth={2.2} />
             </button>
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="hidden sm:block h-6 w-0.5 rounded-full bg-[#c7a65e]/40" />
               <div>
-                <p className="text-[8px] sm:text-[9px] font-black tracking-[0.3em] text-[#c7a65e] uppercase">Portal</p>
-                <p className="text-sm sm:text-base font-black leading-none tracking-tighter uppercase text-zinc-900">
+                <p className="text-[8px] sm:text-[9px] font-black tracking-[0.28em] text-[#c7a65e] uppercase">Portal</p>
+                <p className="text-xs sm:text-base font-black leading-none tracking-tighter uppercase text-zinc-900">
                   Member <span className="font-light text-zinc-400">space</span>
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3.5">
             <button
               type="button"
               onClick={() => showNotice('Booking flow will be available here soon.')}
-              className="hidden sm:flex items-center gap-2 rounded-full bg-zinc-950 px-4 py-2 text-[10px] font-black tracking-[0.16em] text-white uppercase shadow-sm transition hover:bg-[#c7a65e] hover:shadow-md"
+              className="hidden sm:flex items-center gap-2 rounded-full bg-zinc-950 px-4 py-2 text-[10px] font-black tracking-[0.16em] text-white uppercase shadow-sm transition-all duration-200 hover:bg-[#c7a65e] hover:shadow-md hover:shadow-[#c7a65e]/20 active:scale-95"
             >
               <Plus size={14} strokeWidth={2.5} />
               <span>Book Service</span>
             </button>
 
             {/* Notification Bell */}
-            <div className="relative">
+            <div className="relative" ref={notifRef}>
               <button
                 type="button"
                 onClick={() => {
                   setIsNotifMenuOpen(!isNotifMenuOpen);
                   setIsProfileMenuOpen(false);
                 }}
-                className="relative flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:border-[#c7a65e] hover:text-[#a37d2d]"
+                className={`group relative flex h-10 items-center gap-2 rounded-2xl border px-3 transition-all duration-200 active:scale-95 ${
+                  isNotifMenuOpen 
+                    ? 'border-[#c7a65e] bg-zinc-950 text-[#c7a65e] shadow-md shadow-zinc-950/10' 
+                    : 'border-zinc-200/80 bg-zinc-50/50 text-zinc-700 hover:border-[#c7a65e]/60 hover:bg-zinc-100/80'
+                }`}
                 aria-label="View notifications"
               >
-                <Bell size={16} strokeWidth={1.75} className="sm:hidden" />
-                <Bell size={17} strokeWidth={1.75} className="hidden sm:block" />
-                <span className="absolute right-0.5 top-0.5 sm:right-1 sm:top-1 h-2.5 w-2.5 rounded-full bg-[#c7a65e] ring-2 ring-white animate-pulse" />
+                <div className="relative flex items-center justify-center">
+                  <Bell size={16} strokeWidth={2} className={`transition-transform duration-300 group-hover:-rotate-12 ${isNotifMenuOpen ? 'text-[#c7a65e]' : 'text-zinc-700 group-hover:text-zinc-950'}`} />
+                  <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[#c7a65e] ring-2 ring-white animate-pulse" />
+                </div>
+                <span className={`flex h-4.5 min-w-4.5 items-center justify-center rounded-lg px-1.5 text-[9px] font-black tracking-tight transition-colors ${isNotifMenuOpen ? 'bg-[#c7a65e] text-zinc-950' : 'bg-white border border-zinc-200/60 text-zinc-800 shadow-2xs group-hover:border-[#c7a65e]/30'}`}>3</span>
               </button>
 
               {isNotifMenuOpen && (
@@ -255,27 +295,32 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
             </div>
 
             {/* Profile Menu Trigger */}
-            <div className="relative">
+            <div className="relative" ref={profileRef}>
               <button
                 type="button"
                 onClick={() => {
                   setIsProfileMenuOpen(!isProfileMenuOpen);
                   setIsNotifMenuOpen(false);
                 }}
-                className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white p-1 pr-2.5 shadow-sm transition hover:border-[#c7a65e]"
+                className={`flex items-center gap-2 rounded-full border bg-white p-1 transition-all duration-200 active:scale-95 sm:pr-3 ${
+                  isProfileMenuOpen 
+                    ? 'border-[#c7a65e] ring-2 ring-[#c7a65e]/20 shadow-sm' 
+                    : 'border-zinc-200/90 shadow-2xs hover:border-[#c7a65e]'
+                }`}
                 aria-label="User menu"
               >
-                <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-zinc-950 text-[11px] font-black text-[#c7a65e]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-950 text-[11px] font-black text-[#c7a65e] shadow-xs">
                   {userInitial}
                 </div>
-                <span className="hidden sm:inline-block max-w-20 truncate text-xs font-bold text-zinc-800 uppercase">
+                <span className="hidden sm:inline-block max-w-28 lg:max-w-36 truncate text-xs font-bold tracking-tight text-zinc-800 uppercase">
                   {memberName}
                 </span>
+                <ChevronDown size={14} className={`hidden sm:block text-zinc-400 transition-transform duration-200 ${isProfileMenuOpen ? 'rotate-180 text-[#c7a65e]' : ''}`} />
               </button>
 
               {isProfileMenuOpen && (
-                <div className="absolute right-0 mt-3 w-48 rounded-2xl border border-zinc-100 bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2">
-                  <div className="border-b border-zinc-100 px-3 py-2">
+                <div className="absolute right-0 mt-3 w-52 rounded-2xl border border-zinc-100 bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2">
+                  <div className="border-b border-zinc-100 px-3 py-2.5">
                     <p className="text-[9px] font-black tracking-wider text-zinc-400 uppercase">Logged in as</p>
                     <p className="truncate text-xs font-black text-zinc-900 uppercase">{memberName}</p>
                   </div>
@@ -300,7 +345,7 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
                     type="button"
                     onClick={handleLogout}
                     disabled={isLoggingOut}
-                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-bold text-red-500 transition hover:bg-red-50"
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-bold text-red-500 transition hover:bg-red-50 disabled:cursor-wait disabled:opacity-60"
                   >
                     <LogOut size={15} />
                     <span>{isLoggingOut ? 'Signing out...' : 'Sign out'}</span>

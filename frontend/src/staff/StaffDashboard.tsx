@@ -5,18 +5,17 @@ import {
   ChevronDown,
   ClipboardCheck,
   FileText,
+  HelpCircle,
   LayoutDashboard,
   LogOut,
   Mail,
   Menu,
-  Package,
   Plus,
   Settings,
   TrendingUp,
   User,
-  UserRound,
   WalletCards,
-  X
+  X,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { authApi } from '../auth/api';
@@ -25,29 +24,45 @@ type StaffMenuItemProps = {
   icon: typeof LayoutDashboard;
   label: string;
   active?: boolean;
+  onClick?: () => void;
 };
 
-function StaffMenuItem({ icon: Icon, label, active = false }: StaffMenuItemProps) {
+// 🌟 Unified Modern Menu Item
+function StaffMenuItem({ icon: Icon, label, active = false, onClick }: StaffMenuItemProps) {
   return (
-    <div className="mb-1 px-3.5">
+    <div className="px-3.5 mb-1">
       <button
         type="button"
-        className={`group relative flex w-full items-center gap-3.5 rounded-xl border px-3.5 py-2.5 text-left text-[10.5px] font-bold tracking-[0.16em] uppercase transition-all duration-200 ${
+        onClick={onClick}
+        className={`group relative flex w-full items-center gap-3.5 rounded-xl px-3.5 py-2.5 text-left text-[10.5px] font-bold tracking-[0.16em] uppercase transition-all duration-200 ${
           active
-            ? 'border-[#e8ded0] bg-[#faf8f4] text-zinc-900 shadow-[0_2px_10px_-2px_rgba(199,166,94,0.12)]'
-            : 'border-transparent text-zinc-400 hover:translate-x-0.5 hover:bg-zinc-100/60 hover:text-zinc-800'
+            ? 'bg-[#faf8f4] text-zinc-900 border border-[#e8ded0] shadow-[0_2px_10px_-2px_rgba(199,166,94,0.12)]'
+            : 'border border-transparent text-zinc-400 hover:bg-zinc-100/60 hover:text-zinc-800 hover:translate-x-0.5'
         }`}
       >
-        {active && <span className="absolute left-1.5 top-1/2 h-4 w-1 -translate-y-1/2 rounded-full bg-[#c7a65e]" />}
-        <Icon size={16} strokeWidth={active ? 2.2 : 1.75} className={active ? 'ml-1 text-[#b08b3a]' : 'text-zinc-400 transition-colors group-hover:text-zinc-700'} />
+        {active && (
+          <span className="absolute left-1.5 top-1/2 -translate-y-1/2 h-4 w-1 rounded-full bg-[#c7a65e]" />
+        )}
+        <Icon
+          size={16}
+          strokeWidth={active ? 2.2 : 1.75}
+          className={`transition-colors duration-200 ${
+            active ? 'text-[#b08b3a] ml-1' : 'text-zinc-400 group-hover:text-zinc-700'
+          }`}
+        />
         <span>{label}</span>
       </button>
     </div>
   );
 }
 
+// 🌟 Ultra-Clean Section Label
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="px-7 pb-2 pt-5 text-[9px] font-extrabold tracking-[0.25em] text-zinc-400/80 uppercase">{children}</p>;
+  return (
+    <p className="px-7 pt-5 pb-2 text-[9px] font-extrabold tracking-[0.25em] text-zinc-400/80 uppercase">
+      {children}
+    </p>
+  );
 }
 
 export default function StaffDashboard() {
@@ -64,7 +79,6 @@ export default function StaffDashboard() {
   const memberName = 'Staff Member';
   const userInitial = 'S';
 
-  // Click Outside & Escape key handler
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
@@ -117,9 +131,11 @@ export default function StaffDashboard() {
     closeAllDropdowns();
   };
 
+  // 🌟 Sidebar Layout & Bottom Card Structure
   const sidebar = (
-    <aside className="flex h-full w-72 flex-col border-r border-zinc-200/70 bg-white/95 shadow-[6px_0_30px_rgba(0,0,0,0.02)] backdrop-blur-xl">
-      <div className="flex h-20 items-center justify-between border-b border-zinc-100/60 px-7">
+    <aside className="flex h-full w-72 flex-col border-r border-zinc-200/70 bg-white/95 backdrop-blur-xl shadow-[6px_0_30px_rgba(0,0,0,0.02)]">
+      {/* Brand Header */}
+      <div className="flex h-20 items-center justify-between px-7 border-b border-zinc-100/60">
         <button
           type="button"
           onClick={() => {
@@ -128,76 +144,99 @@ export default function StaffDashboard() {
           className="group rounded-xl p-1 transition-all duration-300 hover:bg-zinc-50 active:scale-95"
           aria-label="Hustle Friends home"
         >
-          <img src="/img/HustleLogoBlack.png" alt="Hustle Friends" className="h-14 w-auto max-w-47.5 object-contain transition-transform duration-300 group-hover:scale-[1.03]" />
+          <img
+            src="/img/HustleLogoBlack.png"
+            alt="Hustle Friends"
+            className="h-14 w-auto max-w-47.5 object-contain transition-transform duration-300 group-hover:scale-[1.03] sm:h-16 sm:max-w-55 lg:h-14 lg:max-w-47.5"
+          />
         </button>
-        <button type="button" onClick={() => setIsSidebarOpen(false)} className="rounded-xl p-2 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 lg:hidden" aria-label="Close navigation">
+        <button
+          type="button"
+          onClick={() => setIsSidebarOpen(false)}
+          className="rounded-xl p-2 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition lg:hidden"
+          aria-label="Close navigation"
+        >
           <X size={18} />
         </button>
       </div>
 
+      {/* Navigation Items */}
       <nav className="flex-1 overflow-y-auto py-3" aria-label="Staff navigation">
         <SectionLabel>Staff menu</SectionLabel>
-        <StaffMenuItem icon={LayoutDashboard} label="Staff Home" active />
-        <StaffMenuItem icon={CalendarDays} label="Manage Bookings" />
-        <StaffMenuItem icon={WalletCards} label="Walk-in Payment" />
-        <StaffMenuItem icon={Boxes} label="Inventory" />
+        <StaffMenuItem icon={LayoutDashboard} label="Staff Home" active onClick={() => showNotice('You are viewing the staff overview.')} />
+        <StaffMenuItem icon={CalendarDays} label="Manage Bookings" onClick={() => showNotice('Booking management coming soon.')} />
+        <StaffMenuItem icon={WalletCards} label="Walk-in Payment" onClick={() => showNotice('Walk-in payment system coming soon.')} />
+        <StaffMenuItem icon={Boxes} label="Inventory" onClick={() => showNotice('Inventory module coming soon.')} />
 
         <SectionLabel>Sales &amp; reports</SectionLabel>
-        <StaffMenuItem icon={FileText} label="Payment History" />
-        <StaffMenuItem icon={Package} label="Ready to Pack" />
+        <StaffMenuItem icon={FileText} label="Payment History" onClick={() => showNotice('Payment history coming soon.')} />
 
         <SectionLabel>System</SectionLabel>
-        <StaffMenuItem icon={Bell} label="Notifications" />
-        <StaffMenuItem icon={Mail} label="Messages" />
-        <StaffMenuItem icon={UserRound} label="Profile" />
+        <StaffMenuItem icon={Bell} label="Notifications" onClick={() => showNotice('System notifications coming soon.')} />
+        <StaffMenuItem icon={Mail} label="Messages" onClick={() => showNotice('Messaging system coming soon.')} />
+
+        <SectionLabel>Support</SectionLabel>
+        <StaffMenuItem icon={HelpCircle} label="Help & Support" onClick={() => showNotice('Support center coming soon.')} />
       </nav>
 
+      {/* Modern Sidebar Bottom Member Card */}
       <div className="border-t border-zinc-100 p-4">
-        <button type="button" onClick={handleLogout} disabled={isLoggingOut} className="group flex w-full items-center justify-center gap-2.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50 px-4 py-3 text-center text-[10px] font-bold tracking-[0.18em] text-zinc-600 uppercase transition-all duration-200 hover:border-red-200 hover:bg-red-50/60 hover:text-red-600 disabled:cursor-wait disabled:opacity-60">
-          <LogOut size={15} strokeWidth={2} className="transition-transform duration-200 group-hover:-translate-x-0.5" />
-          <span>{isLoggingOut ? 'Signing out...' : 'Sign Out'}</span>
-        </button>
+        <div className="flex items-center gap-3 rounded-2xl bg-zinc-50/80 border border-zinc-200/60 p-3 transition-colors hover:bg-zinc-100/60">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-950 text-xs font-black text-[#c7a65e] shadow-sm">
+            {userInitial}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="truncate text-xs font-black uppercase text-zinc-900 tracking-tight">{memberName}</p>
+            <p className="text-[9px] font-bold text-[#b08b3a] tracking-widest uppercase">Staff Access</p>
+          </div>
+        </div>
       </div>
     </aside>
   );
 
   return (
-    <main className="min-h-screen w-full bg-[#f7f7f7] font-sans text-zinc-950 overscroll-y-none selection:bg-[#c7a65e] selection:text-white">
+    <main className="min-h-screen w-full bg-[#f7f7f7] font-sans text-zinc-950 selection:bg-[#c7a65e] selection:text-white">
+      {/* Desktop Persistent Sidebar */}
       <div className="fixed inset-y-0 left-0 z-40 hidden lg:block">{sidebar}</div>
 
+      {/* Mobile Drawer Navigation */}
       {isSidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Staff navigation menu">
-          <button type="button" className="absolute inset-0 bg-zinc-950/25 backdrop-blur-[2px]" onClick={() => setIsSidebarOpen(false)} aria-label="Close navigation overlay" />
+          <button
+            type="button"
+            className="absolute inset-0 bg-zinc-950/25 backdrop-blur-[2px] animate-in fade-in duration-300"
+            onClick={() => setIsSidebarOpen(false)}
+            aria-label="Close navigation overlay"
+          />
           <div className="relative h-full w-72">{sidebar}</div>
         </div>
       )}
 
-      <div className="min-h-screen bg-[#f7f7f7] lg:ml-72">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-zinc-200/80 bg-white/80 px-4 backdrop-blur-md transition-all sm:h-20 sm:px-8 lg:px-12">
-          <div className="flex items-center gap-3">
+      <div className="min-h-screen lg:ml-72">
+        {/* Top Navigation Bar */}
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-zinc-200/70 bg-white/85 px-3.5 backdrop-blur-lg transition-all sm:h-20 sm:px-8 lg:px-12">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               type="button"
               onClick={() => setIsSidebarOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100 text-zinc-800 transition-all duration-300 hover:bg-zinc-200 active:scale-90 active:bg-[#c7a65e]/20 lg:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-2xl border border-zinc-200/80 bg-zinc-50/80 text-zinc-800 shadow-xs transition-all duration-200 hover:bg-zinc-100 active:scale-95 lg:hidden"
               aria-label="Open navigation"
               aria-expanded={isSidebarOpen}
             >
-              <Menu size={19} className="transition-transform duration-300 active:rotate-90" />
+              <Menu size={18} strokeWidth={2.2} />
             </button>
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="hidden sm:block h-6 w-0.5 rounded-full bg-[#c7a65e]/40" />
               <div>
-                <p className="text-[8px] sm:text-[9px] font-black tracking-[0.3em] text-[#c7a65e] uppercase">Portal</p>
-                <p className="text-sm sm:text-base font-black leading-none tracking-tighter uppercase text-zinc-900">
+                <p className="text-[8px] sm:text-[9px] font-black tracking-[0.28em] text-[#c7a65e] uppercase">Portal</p>
+                <p className="text-xs sm:text-base font-black leading-none tracking-tighter uppercase text-zinc-900">
                   Staff <span className="font-light text-zinc-400">terminal</span>
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Action Bar */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5">
-            {/* Quick Action Button */}
+          <div className="flex items-center gap-2 sm:gap-3.5">
             <button
               type="button"
               onClick={() => showNotice('Action will be available here soon.')}
@@ -207,7 +246,7 @@ export default function StaffDashboard() {
               <span>Quick Action</span>
             </button>
 
-            {/* Custom Notification Trigger */}
+            {/* Notification Bell */}
             <div className="relative" ref={notifRef}>
               <button
                 type="button"
@@ -215,10 +254,10 @@ export default function StaffDashboard() {
                   setIsNotifMenuOpen(!isNotifMenuOpen);
                   setIsProfileMenuOpen(false);
                 }}
-                className={`group relative flex h-9.5 items-center gap-2 rounded-xl border px-3 transition-all duration-300 active:scale-95 ${
+                className={`group relative flex h-10 items-center gap-2 rounded-2xl border px-3 transition-all duration-200 active:scale-95 ${
                   isNotifMenuOpen
                     ? 'border-[#c7a65e] bg-zinc-950 text-[#c7a65e] shadow-md shadow-zinc-950/10'
-                    : 'border-zinc-200/90 bg-white text-zinc-700 hover:border-[#c7a65e]/60 hover:bg-zinc-50'
+                    : 'border-zinc-200/80 bg-zinc-50/50 text-zinc-700 hover:border-[#c7a65e]/60 hover:bg-zinc-100/80'
                 }`}
                 aria-label="View notifications"
               >
@@ -232,12 +271,11 @@ export default function StaffDashboard() {
                   />
                   <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[#c7a65e] ring-2 ring-white animate-pulse" />
                 </div>
-
                 <span
-                  className={`flex h-4.5 min-w-4.5 items-center justify-center rounded-md px-1.5 text-[9px] font-black tracking-tight transition-colors ${
+                  className={`flex h-4.5 min-w-4.5 items-center justify-center rounded-lg px-1.5 text-[9px] font-black tracking-tight transition-colors ${
                     isNotifMenuOpen
                       ? 'bg-[#c7a65e] text-zinc-950'
-                      : 'bg-zinc-100 text-zinc-800 group-hover:bg-[#c7a65e]/20 group-hover:text-[#9e7c30]'
+                      : 'bg-white border border-zinc-200/60 text-zinc-800 shadow-2xs group-hover:border-[#c7a65e]/30'
                   }`}
                 >
                   3
@@ -269,14 +307,14 @@ export default function StaffDashboard() {
                   setIsProfileMenuOpen(!isProfileMenuOpen);
                   setIsNotifMenuOpen(false);
                 }}
-                className={`flex items-center gap-2 rounded-full border bg-white p-1 pr-3 shadow-sm transition-all duration-200 active:scale-95 ${
+                className={`flex items-center gap-2 rounded-full border bg-white p-1 transition-all duration-200 active:scale-95 sm:pr-3 ${
                   isProfileMenuOpen
-                    ? 'border-[#c7a65e] ring-2 ring-[#c7a65e]/20'
-                    : 'border-zinc-200 hover:border-[#c7a65e]'
+                    ? 'border-[#c7a65e] ring-2 ring-[#c7a65e]/20 shadow-sm'
+                    : 'border-zinc-200/90 shadow-2xs hover:border-[#c7a65e]'
                 }`}
                 aria-label="User menu"
               >
-                <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-zinc-950 text-[11px] font-black text-[#c7a65e] shadow-inner">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-950 text-[11px] font-black text-[#c7a65e] shadow-xs">
                   {userInitial}
                 </div>
                 <span className="hidden sm:inline-block max-w-28 lg:max-w-36 truncate text-xs font-bold tracking-tight text-zinc-800 uppercase">
@@ -328,12 +366,13 @@ export default function StaffDashboard() {
           </div>
         </header>
 
+        {/* Staff Dashboard Main Content */}
         <div className="mx-auto max-w-[1570px] px-3.5 py-4 sm:px-6 sm:py-8 lg:px-10 xl:px-12">
-          {error && <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-xs font-medium text-red-700 sm:mb-6 sm:px-4 sm:py-3 sm:text-sm" role="alert">{error}</p>}
+          {error && <p className="mb-4 sm:mb-6 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium text-red-700" role="alert">{error}</p>}
           {notice && <p className="mb-4 sm:mb-6 rounded-xl border border-[#dfcfaa] bg-[#fdf9ef] px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium text-[#735719]" role="status">{notice}</p>}
 
           <section aria-labelledby="staff-dashboard-heading">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-[#e7dcc5] bg-[#f9f5ea] px-2.5 py-1 text-[8px] font-black tracking-[0.24em] text-[#bb9143] uppercase sm:text-[9px]">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-[#e7dcc5] bg-[#f9f5ea] px-2.5 py-1 text-[8px] sm:text-[9px] font-black tracking-[0.24em] text-[#bb9143] uppercase">
               <span className="h-1.5 w-1.5 rounded-full bg-[#c7a65e]" />
               Internal access only
             </div>
