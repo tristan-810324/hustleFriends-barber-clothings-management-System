@@ -16,9 +16,18 @@ import Register from './auth/Register';
 import ForgotPassword from './auth/ForgotPassword';
 import ResetOtp from './auth/ResetOtp';
 import ResetPassword from './auth/ResetPassword';
+
+// for  client sections
 import ClientDashboard from './client/ClientDashboard';
-import OwnerDashboard from './owner/OwnerDashboard';
+import ClientAppointments from './client/ClientAppointments';
+
+// for  owner 
+import OwnerDashboard from './owner/OwnerDashboard'; 
+
+
+// for staff  
 import StaffDashboard from './staff/StaffDashboard';
+
 
 const getCurrentView = () => {
   if (window.location.hash === '#login') return 'login';
@@ -27,6 +36,7 @@ const getCurrentView = () => {
   if (window.location.hash === '#reset-otp') return 'reset-otp';
   if (window.location.hash === '#reset-password') return 'reset-password';
   if (window.location.hash === '#client') return 'client';
+  if (window.location.hash === '#client-appointments') return 'client-appointments';
   if (window.location.hash === '#owner') return 'owner';
   if (window.location.hash === '#staff') return 'staff';
   return 'home';
@@ -42,7 +52,7 @@ function App() {
     const handleHashChange = () => {
       const upcomingView = getCurrentView();
 
-      if (!['client', 'owner', 'staff'].includes(upcomingView)) {
+      if (!['owner', 'staff'].includes(upcomingView)) {
         setCurrentView(upcomingView);
         return;
       }
@@ -118,6 +128,10 @@ function App() {
 
   if (currentView === 'client') {
     return <ClientDashboard username={window.sessionStorage.getItem('clientUsername') ?? 'verified client'} />;
+  }
+
+  if (currentView === 'client-appointments') {
+    return <ClientAppointments username={window.sessionStorage.getItem('clientUsername') ?? 'verified client'} />;
   }
 
   if (currentView === 'owner') {

@@ -176,7 +176,7 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
       <nav className="flex-1 overflow-y-auto py-3">
         <SectionLabel>Main menu</SectionLabel>
         <MenuItem icon={LayoutDashboard} label="Overview" active onClick={() => showNotice('You are already viewing your overview.')} />
-        <MenuItem icon={Scissors} label="Appointments" onClick={() => showNotice('Appointments will be available here soon.')} />
+        <MenuItem icon={Scissors} label="Appointments" onClick={() => { window.location.hash = '#client-appointments'; }} />
         <MenuItem icon={CalendarCheck2} label="Booking history" onClick={() => showNotice('No booking history yet.')} />
         <MenuItem icon={ShoppingBag} label="Membership plan" onClick={() => showNotice('Your Standard membership is active.')} />
 
