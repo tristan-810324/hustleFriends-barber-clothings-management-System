@@ -20,6 +20,7 @@ import ResetPassword from './auth/ResetPassword';
 // for  client sections
 import ClientDashboard from './client/ClientDashboard';
 import ClientAppointments from './client/ClientAppointments';
+import ClientBookingHistory from './client/ClientBookingHistory';
 
 // for  owner 
 import OwnerDashboard from './owner/OwnerDashboard'; 
@@ -37,6 +38,7 @@ const getCurrentView = () => {
   if (window.location.hash === '#reset-password') return 'reset-password';
   if (window.location.hash === '#client') return 'client';
   if (window.location.hash === '#client-appointments') return 'client-appointments';
+  if (window.location.hash === '#client-history') return 'client-history';
   if (window.location.hash === '#owner') return 'owner';
   if (window.location.hash === '#staff') return 'staff';
   return 'home';
@@ -132,6 +134,10 @@ function App() {
 
   if (currentView === 'client-appointments') {
     return <ClientAppointments username={window.sessionStorage.getItem('clientUsername') ?? 'verified client'} />;
+  }
+
+  if (currentView === 'client-history') {
+    return <ClientBookingHistory username={window.sessionStorage.getItem('clientUsername') ?? 'verified client'} />;
   }
 
   if (currentView === 'owner') {

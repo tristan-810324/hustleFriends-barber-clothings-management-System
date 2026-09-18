@@ -2,15 +2,18 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	ArrowRight,
 	Bell,
+	Calendar,
 	CalendarCheck2,
-	CalendarDays,
 	Check,
-	ChevronDown,
+	ChevronRight,
+	Clock,
 	Clock3,
+	ExternalLink,
 	HelpCircle,
 	LayoutDashboard,
 	LogOut,
 	Menu,
+	MessageSquare,
 	Plus,
 	ReceiptText,
 	Scissors,
@@ -18,6 +21,7 @@ import {
 	ShoppingBag,
 	Sparkles,
 	User,
+	UserCheck,
 	X,
 } from 'lucide-react';
 
@@ -79,7 +83,7 @@ function MenuItem({ icon: Icon, label, active = false, onClick }: MenuItemProps)
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
 	return (
-		<p className="px-7 pt-5 pb-2 text-[9px] font-bold tracking-[0.25em] text-zinc-400/80 uppercase">
+		<p className="px-7 pt-5 pb-2 text-[9px] font-extrabold tracking-[0.25em] text-zinc-400/80 uppercase">
 			{children}
 		</p>
 	);
@@ -92,9 +96,12 @@ export default function ClientAppointments({ username }: ClientAppointmentsProps
 	const [barber, setBarber] = useState('Any Available Barber');
 	const [date, setDate] = useState('');
 	const [time, setTime] = useState('');
+	const [styleRequest, setStyleRequest] = useState('');
 	const [notes, setNotes] = useState('');
 
-	// Dropdown states from Dashboard
+	// Mobile view active tab: 'form' | 'bookings'
+	const [activeMobileTab, setActiveMobileTab] = useState<'form' | 'bookings'>('form');
+
 	const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 	const [isNotifMenuOpen, setIsNotifMenuOpen] = useState(false);
 
@@ -167,7 +174,7 @@ export default function ClientAppointments({ username }: ClientAppointmentsProps
 				<SectionLabel>Main menu</SectionLabel>
 				<MenuItem icon={LayoutDashboard} label="Overview" onClick={() => { window.location.hash = '#client'; }} />
 				<MenuItem icon={Scissors} label="Appointments" active />
-				<MenuItem icon={CalendarCheck2} label="Booking history" onClick={() => { window.location.hash = '#client-appointments'; }} />
+				<MenuItem icon={CalendarCheck2} label="Booking history" onClick={() => { window.location.hash = '#client-history'; }} />
 				<MenuItem icon={ShoppingBag} label="Membership plan" onClick={() => { window.location.hash = '#client'; }} />
 
 				<SectionLabel>Finance &amp; lifestyle</SectionLabel>
@@ -180,12 +187,12 @@ export default function ClientAppointments({ username }: ClientAppointmentsProps
 
 			<div className="border-t border-zinc-100 p-4">
 				<div className="flex items-center gap-3 rounded-2xl bg-zinc-50/80 border border-zinc-200/60 p-3 transition-colors hover:bg-zinc-100/60">
-					<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-950 text-xs font-bold text-[#c7a65e] shadow-sm">
+					<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-950 text-xs font-black text-[#c7a65e] shadow-sm">
 						{initial}
 					</div>
 					<div className="flex-1 min-w-0">
-						<p className="truncate text-xs font-bold uppercase text-zinc-900 tracking-tight">{username || 'Member'}</p>
-						<p className="text-[9px] font-semibold text-[#b08b3a] tracking-widest uppercase">Standard Member</p>
+						<p className="truncate text-xs font-black uppercase text-zinc-900 tracking-tight">{username || 'Member'}</p>
+						<p className="text-[9px] font-bold text-[#b08b3a] tracking-widest uppercase">Standard Member</p>
 					</div>
 				</div>
 			</div>
@@ -222,8 +229,8 @@ export default function ClientAppointments({ username }: ClientAppointmentsProps
 						<div className="flex items-center gap-2 sm:gap-3">
 							<div className="hidden sm:block h-6 w-0.5 rounded-full bg-[#c7a65e]/40" />
 							<div>
-								<p className="text-[8px] sm:text-[9px] font-bold tracking-[0.28em] text-[#c7a65e] uppercase">Portal</p>
-								<p className="text-xs sm:text-base font-bold leading-none tracking-tighter uppercase text-zinc-900">
+								<p className="text-[8px] sm:text-[9px] font-black tracking-[0.28em] text-[#c7a65e] uppercase">Portal</p>
+								<p className="text-xs sm:text-base font-black leading-none tracking-tighter uppercase text-zinc-900">
 									Member <span className="font-light text-zinc-400">space</span>
 								</p>
 							</div>
@@ -233,7 +240,7 @@ export default function ClientAppointments({ username }: ClientAppointmentsProps
 					<div className="flex items-center gap-2 sm:gap-3.5">
 						<button
 							type="button"
-							className="hidden sm:flex items-center gap-2 rounded-full bg-zinc-950 px-4 py-2 text-[10px] font-bold tracking-[0.16em] text-white uppercase shadow-sm transition-all duration-200 hover:bg-[#c7a65e] hover:shadow-md hover:shadow-[#c7a65e]/20 active:scale-95"
+							className="hidden sm:flex items-center gap-2 rounded-full bg-zinc-950 px-4 py-2 text-[10px] font-black tracking-[0.16em] text-white uppercase shadow-sm transition-all duration-200 hover:bg-[#c7a65e] hover:shadow-md hover:shadow-[#c7a65e]/20 active:scale-95 cursor-pointer"
 						>
 							<Plus size={14} strokeWidth={2.5} />
 							<span>Book Service</span>
@@ -257,20 +264,20 @@ export default function ClientAppointments({ username }: ClientAppointmentsProps
 									<Bell size={16} strokeWidth={2} className={`transition-transform duration-300 group-hover:-rotate-12 ${isNotifMenuOpen ? 'text-[#c7a65e]' : 'text-zinc-700 group-hover:text-zinc-950'}`} />
 									<span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[#c7a65e] ring-2 ring-white animate-pulse" />
 								</div>
-								<span className={`flex h-4.5 min-w-4.5 items-center justify-center rounded-lg px-1.5 text-[9px] font-bold tracking-tight transition-colors ${isNotifMenuOpen ? 'bg-[#c7a65e] text-zinc-950' : 'bg-white border border-zinc-200/60 text-zinc-800 shadow-2xs group-hover:border-[#c7a65e]/30'}`}>3</span>
+								<span className={`flex h-4.5 min-w-4.5 items-center justify-center rounded-lg px-1.5 text-[9px] font-black tracking-tight transition-colors ${isNotifMenuOpen ? 'bg-[#c7a65e] text-zinc-950' : 'bg-white border border-zinc-200/60 text-zinc-800 shadow-2xs group-hover:border-[#c7a65e]/30'}`}>3</span>
 							</button>
 
 							{isNotifMenuOpen && (
-								<div className="absolute right-0 mt-3 w-72 sm:w-80 rounded-2xl border border-zinc-100 bg-white shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2">
+								<div className="absolute right-0 mt-3 w-72 sm:w-80 rounded-2xl border border-zinc-100 bg-white shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2 z-50">
 									<div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3">
-										<p className="text-[10px] font-bold tracking-[0.15em] text-zinc-900 uppercase">Notifications</p>
-										<button type="button" onClick={() => setIsNotifMenuOpen(false)} className="text-[9px] font-semibold text-[#c7a65e] uppercase transition hover:text-[#a37d2d]">Mark as read</button>
+										<p className="text-[10px] font-black tracking-[0.15em] text-zinc-900 uppercase">Notifications</p>
+										<button type="button" onClick={() => setIsNotifMenuOpen(false)} className="text-[9px] font-bold text-[#c7a65e] uppercase transition hover:text-[#a37d2d]">Mark as read</button>
 									</div>
 									<div className="flex flex-col items-center justify-center px-6 py-8 text-center">
 										<div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-50 text-zinc-300">
 											<Bell size={20} strokeWidth={2} />
 										</div>
-										<p className="text-xs font-bold tracking-wide text-zinc-700 uppercase">You're all caught up!</p>
+										<p className="text-xs font-black tracking-wide text-zinc-700 uppercase">You're all caught up!</p>
 										<p className="mt-1.5 text-xs text-zinc-500">No new notifications or alerts at the moment.</p>
 									</div>
 								</div>
@@ -291,43 +298,30 @@ export default function ClientAppointments({ username }: ClientAppointmentsProps
 								}`}
 								aria-label="User menu"
 							>
-								<div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-950 text-[11px] font-bold text-[#c7a65e] shadow-xs">
+								<div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-950 text-[11px] font-black text-[#c7a65e] shadow-xs">
 									{initial}
 								</div>
-								<span className="hidden sm:inline-block max-w-28 lg:max-w-36 truncate text-xs font-semibold tracking-tight text-zinc-800 uppercase">
+								<span className="hidden sm:inline-block max-w-28 lg:max-w-36 truncate text-xs font-bold tracking-tight text-zinc-800 uppercase">
 									{username || 'Member'}
 								</span>
-								<ChevronDown size={14} className={`hidden sm:block text-zinc-400 transition-transform duration-200 ${isProfileMenuOpen ? 'rotate-180 text-[#c7a65e]' : ''}`} />
+								<ChevronRight size={14} className={`hidden sm:block text-zinc-400 transition-transform duration-200 ${isProfileMenuOpen ? 'rotate-90 text-[#c7a65e]' : ''}`} />
 							</button>
 
 							{isProfileMenuOpen && (
-								<div className="absolute right-0 mt-3 w-52 rounded-2xl border border-zinc-100 bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2">
+								<div className="absolute right-0 mt-3 w-52 rounded-2xl border border-zinc-100 bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2 z-50">
 									<div className="border-b border-zinc-100 px-3 py-2.5">
-										<p className="text-[9px] font-bold tracking-wider text-zinc-400 uppercase">Logged in as</p>
-										<p className="truncate text-xs font-bold text-zinc-900 uppercase">{username || 'Member'}</p>
+										<p className="text-[9px] font-black tracking-wider text-zinc-400 uppercase">Logged in as</p>
+										<p className="truncate text-xs font-black text-zinc-900 uppercase">{username || 'Member'}</p>
 									</div>
-									<button
-										type="button"
-										className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-950"
-									>
-										<User size={15} />
-										<span>My Profile</span>
+									<button type="button" className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-bold text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-950">
+										<User size={15} /> <span>My Profile</span>
 									</button>
-									<button
-										type="button"
-										className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-950"
-									>
-										<Settings size={15} />
-										<span>Settings</span>
+									<button type="button" className="flex w-full items-center gap-[#000] rounded-xl px-3 py-2 text-left text-xs font-bold text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-950">
+										<Settings size={15} /> <span>Settings</span>
 									</button>
 									<div className="my-1 border-t border-zinc-100" />
-									<button
-										type="button"
-										onClick={handleLogout}
-										className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-medium text-red-500 transition hover:bg-red-50"
-									>
-										<LogOut size={15} />
-										<span>Sign out</span>
+									<button type="button" onClick={handleLogout} className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-bold text-red-500 transition hover:bg-red-50">
+										<LogOut size={15} /> <span>Sign out</span>
 									</button>
 								</div>
 							)}
@@ -335,125 +329,310 @@ export default function ClientAppointments({ username }: ClientAppointmentsProps
 					</div>
 				</header>
 
-				<div className="mx-auto max-w-[1570px] px-3.5 py-5 sm:px-6 sm:py-8 lg:px-10 xl:px-12">
-					{submitted && <div role="status" className="mb-5 flex items-center gap-2 rounded-xl border border-[#dfcfaa] bg-[#fdf9ef] px-4 py-3 text-xs font-semibold text-[#735719]"><Check size={15} /> Request received. Your booking is awaiting staff approval.</div>}
-					<section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-						<div>
-							<div className="inline-flex items-center gap-1.5 rounded-full border border-[#e7dcc5] bg-[#f9f5ea] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.24em] text-[#bb9143]">
-								<span className="h-1.5 w-1.5 rounded-full bg-[#c7a65e]" /> Client portal
-							</div>
-							<h1 className="mt-3 text-3xl font-extrabold uppercase leading-none tracking-[-0.05em] sm:text-5xl">
-								Book <span className="italic font-bold text-zinc-500">your session.</span>
-							</h1>
-							<p className="mt-3 max-w-xl text-sm leading-6 text-zinc-500">Select your preferred date, time, and service below. All bookings are subject to staff approval to avoid conflicts.</p>
+				<div className="mx-auto max-w-[1570px] px-3 py-4 sm:px-6 sm:py-8 lg:px-10 xl:px-12">
+					{submitted && (
+						<div role="status" className="mb-4 sm:mb-6 flex items-center gap-3 rounded-2xl border border-[#dfcfaa] bg-[#fdf9ef] px-4 py-3 text-xs sm:text-sm font-bold text-[#735719] shadow-2xs">
+							<Check size={16} className="text-[#c7a65e]" />
+							<span>Request received. Your booking is awaiting staff approval.</span>
 						</div>
-						<div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-400">
-							<Clock3 size={15} className="text-[#c7a65e]" /> Approval required
+					)}
+
+					{/* PAGE TITLE */}
+					<section className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-zinc-200/60 pb-4 sm:pb-6">
+						<div>
+							<div className="inline-flex items-center gap-2 rounded-full border border-[#e7dcc5] bg-[#fdfaf3] px-2.5 py-0.5 sm:px-3 sm:py-1 text-[8px] sm:text-[9px] font-black tracking-[0.22em] text-[#b68a36] uppercase shadow-2xs">
+								<span className="h-1.5 w-1.5 rounded-full bg-[#c7a65e] animate-pulse" />
+								<span>Appointment Concierge</span>
+							</div>
+							<h1 className="mt-1.5 sm:mt-2.5 text-2xl font-black uppercase leading-tight tracking-tighter sm:text-4xl lg:text-5xl text-zinc-900">
+								Book <span className="italic font-serif font-normal text-zinc-400 lowercase">your</span> session
+							</h1>
+						</div>
+
+						<div className="hidden sm:flex items-center gap-2.5 rounded-2xl border border-zinc-200/80 bg-white px-3.5 py-2 shadow-2xs">
+							<div className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#f8f4e9] text-[#b68a36]">
+								<Clock3 size={15} />
+							</div>
+							<div>
+								<span className="block text-[8px] font-black uppercase tracking-[0.2em] text-zinc-400">Confirmation speed</span>
+								<span className="text-[11px] font-black uppercase text-zinc-800 tracking-tight">Instant Approval System</span>
+							</div>
 						</div>
 					</section>
 
-					<div className="mt-7 grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(330px,0.8fr)]">
-						<form onSubmit={submitBooking} className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-[0_12px_35px_rgba(28,28,28,0.035)] sm:rounded-[2.35rem] sm:p-8">
-							<div className="mb-7 flex items-center justify-between border-b border-zinc-100 pb-5">
-								<div>
-									<p className="text-[9px] font-bold uppercase tracking-[0.28em] text-[#b68a36]">Appointment details</p>
-									<h2 className="mt-1 text-2xl font-bold uppercase tracking-[-0.04em]">Reserve <span className="font-semibold text-zinc-400">your slot</span></h2>
+					{/* MOBILE TAB SWITCHER */}
+					<div className="mt-4 flex rounded-2xl bg-zinc-200/60 p-1 lg:hidden">
+						<button
+							type="button"
+							onClick={() => setActiveMobileTab('form')}
+							className={`flex-1 rounded-xl py-2.5 text-center text-[10px] font-black uppercase tracking-wider transition-all ${
+								activeMobileTab === 'form'
+									? 'bg-zinc-950 text-white shadow-sm'
+									: 'text-zinc-600 hover:text-zinc-900'
+							}`}
+						>
+							Book Session
+						</button>
+						<button
+							type="button"
+							onClick={() => setActiveMobileTab('bookings')}
+							className={`flex-1 rounded-xl py-2.5 text-center text-[10px] font-black uppercase tracking-wider transition-all ${
+								activeMobileTab === 'bookings'
+									? 'bg-zinc-950 text-white shadow-sm'
+									: 'text-zinc-600 hover:text-zinc-900'
+							}`}
+						>
+							My Bookings ({bookings.length})
+						</button>
+					</div>
+
+					{/* CONTENT GRID - EQUAL HEIGHT ON DESKTOP */}
+					<div className="mt-4 sm:mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(350px,0.75fr)] items-stretch">
+						
+						{/* BOOKING FORM */}
+						<form 
+							onSubmit={submitBooking} 
+							className={`flex flex-col justify-between rounded-3xl border border-zinc-200/80 bg-white p-4 sm:p-7 shadow-xs ${
+								activeMobileTab === 'form' ? 'block' : 'hidden lg:flex'
+							}`}
+						>
+							<div>
+								<div className="mb-4 sm:mb-5 flex items-center justify-between border-b border-zinc-100 pb-3 sm:pb-4">
+									<div>
+										<p className="text-[9px] font-black uppercase tracking-[0.25em] text-[#b68a36]">Appointment details</p>
+										<h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-zinc-900">
+											Reserve <span className="font-light text-zinc-400">your slot</span>
+										</h2>
+									</div>
+									<div className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-[#f8f4e9] text-[#b68a36]">
+										<Scissors size={18} className="sm:hidden" />
+										<Scissors size={20} className="hidden sm:block" />
+									</div>
 								</div>
-								<div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f8f4e9] text-[#b68a36]">
-									<Scissors size={19} />
+
+								<div className="grid gap-3.5 sm:gap-4">
+									<div className="grid gap-3.5 sm:gap-4 sm:grid-cols-2">
+										<div>
+											<label className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-zinc-500 mb-1">
+												<Calendar size={13} className="text-[#c7a65e]" /> Date
+											</label>
+											<input
+												required
+												type="date"
+												value={date}
+												onChange={(event) => setDate(event.target.value)}
+												className="w-full rounded-2xl border border-zinc-200/90 bg-zinc-50/50 px-3.5 py-2 sm:py-2.5 text-xs font-bold text-zinc-800 outline-none transition focus:border-[#c7a65e] focus:bg-white focus:ring-2 focus:ring-[#c7a65e]/10"
+											/>
+										</div>
+										<div>
+											<label className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-zinc-500 mb-1">
+												<Clock size={13} className="text-[#c7a65e]" /> Exact time
+											</label>
+											<input
+												required
+												type="time"
+												value={time}
+												onChange={(event) => setTime(event.target.value)}
+												className="w-full rounded-2xl border border-zinc-200/90 bg-zinc-50/50 px-3.5 py-2 sm:py-2.5 text-xs font-bold text-zinc-800 outline-none transition focus:border-[#c7a65e] focus:ring-2 focus:ring-[#c7a65e]/10"
+											/>
+										</div>
+									</div>
+
+									<div className="grid gap-3.5 sm:gap-4 sm:grid-cols-2">
+										<div>
+											<label className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-zinc-500 mb-1">
+												<Scissors size={13} className="text-[#c7a65e]" /> Select service
+											</label>
+											<div className="relative">
+												<select
+													required
+													value={service}
+													onChange={(event) => setService(event.target.value)}
+													className="w-full appearance-none rounded-2xl border border-zinc-200/90 bg-zinc-50/50 px-3.5 py-2 sm:py-2.5 text-xs font-bold text-zinc-800 outline-none transition focus:border-[#c7a65e] focus:bg-white cursor-pointer"
+												>
+													<option value="">Choose a base service</option>
+													<option>Trending Fade</option>
+													<option>Korean Two-Block</option>
+													<option>Classic Gentlemen</option>
+													<option>Buzz &amp; French Crop</option>
+													<option>Beard Trim &amp; Lineup</option>
+													<option>Other / Custom Haircut</option>
+												</select>
+												<ChevronRight size={15} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 rotate-90 text-zinc-400" />
+											</div>
+										</div>
+
+										<div>
+											<label className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-zinc-500 mb-1">
+												<UserCheck size={13} className="text-[#c7a65e]" /> Preferred barber
+											</label>
+											<div className="relative">
+												<select
+													value={barber}
+													onChange={(event) => setBarber(event.target.value)}
+													className="w-full appearance-none rounded-2xl border border-zinc-200/90 bg-zinc-50/50 px-3.5 py-2 sm:py-2.5 text-xs font-bold text-zinc-800 outline-none transition focus:border-[#c7a65e] focus:bg-white cursor-pointer"
+												>
+													<option>Any Available Barber</option>
+													<option>boss alphon</option>
+													<option>master bebe</option>
+												</select>
+												<ChevronRight size={15} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 rotate-90 text-zinc-400" />
+											</div>
+										</div>
+									</div>
+
+									<div className="grid gap-3.5 sm:gap-4 sm:grid-cols-2">
+										<div>
+											<label className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-zinc-500 mb-1">
+												<span>Style / request</span>
+												<span className="font-normal lowercase text-zinc-400">(optional)</span>
+											</label>
+											<input
+												value={styleRequest}
+												onChange={(event) => setStyleRequest(event.target.value)}
+												placeholder="Tell us what you have in mind"
+												className="w-full rounded-2xl border border-zinc-200/90 bg-zinc-50/50 px-3.5 py-2 sm:py-2.5 text-xs font-bold text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-[#c7a65e] focus:bg-white"
+											/>
+										</div>
+
+										<div>
+											<label className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-zinc-500 mb-1">
+												<span className="flex items-center gap-1.5">
+													<MessageSquare size={13} className="text-[#c7a65e]" /> Special notes
+												</span>
+												<span className="font-normal lowercase text-zinc-400">(optional)</span>
+											</label>
+											<input
+												value={notes}
+												onChange={(event) => setNotes(event.target.value)}
+												placeholder="Anything your barber should know?"
+												className="w-full rounded-2xl border border-zinc-200/90 bg-zinc-50/50 px-3.5 py-2 sm:py-2.5 text-xs font-bold text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-[#c7a65e] focus:bg-white"
+											/>
+										</div>
+									</div>
+								</div>
+
+								<div className="mt-4 sm:mt-5 flex items-center justify-between gap-3 rounded-2xl border border-[#eadfc8] bg-[#fdf9ef]/90 p-3 sm:p-4">
+									<div className="flex items-center gap-2.5">
+										<div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-[#c7a65e]/20 text-[#735719]">
+											<Sparkles size={16} />
+										</div>
+										<div>
+											<p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.16em] text-[#735719]">VIP member perk</p>
+											<p className="text-[11px] sm:text-xs font-bold text-[#8a7444]">1 session will be used for this booking.</p>
+										</div>
+									</div>
+									<div className="text-right">
+										<span className="text-lg sm:text-xl font-black text-[#735719]">12</span>
+										<span className="ml-1 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#9c8552]">left</span>
+									</div>
 								</div>
 							</div>
 
-							<div className="grid gap-5 sm:grid-cols-2">
-								<label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
-									Date
-									<input required type="date" value={date} onChange={(event) => setDate(event.target.value)} className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm font-medium tracking-normal text-zinc-800 outline-none transition focus:border-[#c7a65e] focus:ring-2 focus:ring-[#c7a65e]/15" />
-								</label>
-								<label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
-									Exact time
-									<input required type="time" value={time} onChange={(event) => setTime(event.target.value)} className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm font-medium tracking-normal text-zinc-800 outline-none transition focus:border-[#c7a65e] focus:ring-2 focus:ring-[#c7a65e]/15" />
-								</label>
-							</div>
-
-							<label className="mt-5 block text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
-								Select service
-								<select required value={service} onChange={(event) => setService(event.target.value)} className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm font-medium tracking-normal text-zinc-800 outline-none focus:border-[#c7a65e]">
-									<option value="">Choose a base service</option>
-									<option>Trending Fade</option>
-									<option>Korean Two-Block</option>
-									<option>Classic Gentlemen</option>
-									<option>Buzz &amp; French Crop</option>
-									<option>Beard Trim &amp; Lineup</option>
-									<option>Other / Custom Haircut</option>
-								</select>
-							</label>
-
-							<label className="mt-5 block text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
-								Style / request <span className="font-normal normal-case tracking-normal text-zinc-400">(optional)</span>
-								<input value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Tell us what you have in mind" className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm font-medium tracking-normal text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-[#c7a65e]" />
-							</label>
-
-							<label className="mt-5 block text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
-								Preferred barber
-								<select value={barber} onChange={(event) => setBarber(event.target.value)} className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm font-medium tracking-normal text-zinc-800 outline-none focus:border-[#c7a65e]">
-									<option>Any Available Barber</option>
-									<option>boss alphon</option>
-									<option>master bebe</option>
-								</select>
-							</label>
-
-							<label className="mt-5 block text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
-								Special notes <span className="font-normal normal-case tracking-normal text-zinc-400">(optional)</span>
-								<textarea rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Anything your barber should know?" className="mt-2 w-full resize-none rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm font-medium tracking-normal text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-[#c7a65e]" />
-							</label>
-
-							<div className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-[#eadfc8] bg-[#fdf9ef] px-4 py-3 sm:col-span-2">
-								<div>
-									<p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#735719]">VIP member</p>
-									<p className="mt-1 text-xs font-medium text-[#8a7444]">1 session will be used for this booking.</p>
-								</div>
-								<p className="text-xl font-bold text-[#735719]">12<span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-[#9c8552]">sessions left</span></p>
-							</div>
-
-							<button type="submit" className="mt-1 inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-md transition hover:bg-[#c7a65e] sm:col-span-2">
-								Request appointment <ArrowRight size={15} />
+							<button
+								type="submit"
+								className="mt-4 sm:mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-zinc-950 py-3 sm:py-3.5 text-xs font-black uppercase tracking-[0.18em] text-white shadow-sm hover:bg-[#c7a65e] transition-all cursor-pointer active:scale-[0.99]"
+							>
+								<span>Request appointment</span>
+								<ArrowRight size={15} />
 							</button>
 						</form>
 
-						<section className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-[0_12px_35px_rgba(28,28,28,0.035)] sm:rounded-[2.35rem]" aria-labelledby="bookings-heading">
-							<div className="flex items-center justify-between border-b border-zinc-200 px-5 py-5 sm:px-7">
+						{/* MY BOOKINGS CARD - EQUAL HEIGHT WITH CUSTOM MODERN SCROLLBAR */}
+						<section 
+							className={`rounded-3xl border border-zinc-200/80 bg-white shadow-xs overflow-hidden flex flex-col h-full ${
+								activeMobileTab === 'bookings' ? 'flex' : 'hidden lg:flex'
+							}`} 
+							aria-labelledby="bookings-heading"
+						>
+							{/* Header */}
+							<div className="flex items-center justify-between border-b border-zinc-100 bg-linear-to-r from-zinc-50/80 via-white to-zinc-50/80 px-4 py-3.5 sm:px-5 sm:py-4 shrink-0">
 								<div>
-									<p className="text-[9px] font-bold uppercase tracking-[0.28em] text-[#b68a36]">Your schedule</p>
-									<h2 id="bookings-heading" className="mt-1 text-xl font-bold uppercase tracking-[-0.04em]">My <span className="font-semibold text-zinc-400">bookings</span></h2>
+									<div className="flex items-center gap-1.5">
+										<span className="h-1.5 w-1.5 rounded-full bg-[#c7a65e]" />
+										<p className="text-[9px] font-black uppercase tracking-[0.25em] text-[#b68a36]">Your schedule</p>
+									</div>
+									<h2 id="bookings-heading" className="text-lg sm:text-xl font-black uppercase tracking-tight text-zinc-900 mt-0.5">
+										My <span className="font-light text-zinc-400">Bookings</span>
+									</h2>
 								</div>
-								<button type="button" className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#a37d2d]">View all</button>
+								<button 
+									type="button" 
+									onClick={() => { window.location.hash = '#client-appointments'; }}
+									className="group flex items-center gap-1.5 rounded-xl border border-zinc-200/80 bg-white px-2.5 py-1.5 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.14em] text-zinc-700 shadow-2xs hover:border-[#c7a65e] hover:text-[#b68a36] transition-all"
+								>
+									<span>View all</span>
+									<ExternalLink size={12} className="text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-[#b68a36]" />
+								</button>
 							</div>
-							<div className="divide-y divide-zinc-100">
-								{bookings.map((booking) => (
-									<article key={booking.reference} className="p-5 transition hover:bg-zinc-50/70 sm:px-7">
-										<div className="flex items-start justify-between gap-3">
-											<div>
-												<p className="text-[9px] font-bold uppercase tracking-[0.17em] text-zinc-400">{booking.reference}</p>
-												<h3 className="mt-1 text-sm font-bold uppercase tracking-tight text-zinc-900">{booking.service}</h3>
+
+							{/* Bookings List with Modern Custom Scrollbar */}
+							<div className="divide-y divide-zinc-100 overflow-y-auto flex-1 p-3 sm:p-3.5 space-y-2.5 sm:space-y-3 max-h-125 lg:max-h-[calc(100vh-280px)] xl:max-h-130 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-50 [&::-webkit-scrollbar-thumb]:bg-zinc-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#c7a65e]/60">
+								{bookings.map((booking) => {
+									const isApproved = booking.status === 'Approved';
+									return (
+										<article 
+											key={booking.reference} 
+											className={`group relative rounded-2xl border p-3 sm:p-4 transition-all duration-300 hover:shadow-md ${
+												isApproved 
+													? 'bg-linear-to-br from-[#fdfbf6] via-white to-[#fcf8f0] border-[#ecdcb8] hover:border-[#c7a65e]' 
+													: 'bg-white border-zinc-200/70 hover:border-zinc-300'
+											}`}
+										>
+											{/* Top Row: Ref & Status */}
+											<div className="flex items-center justify-between border-b border-zinc-100/80 pb-2">
+												<div className="flex items-center gap-2">
+													<span className="rounded-lg bg-zinc-100 px-2 py-0.5 font-mono text-[9px] sm:text-[9.5px] font-black tracking-wider text-zinc-500 group-hover:bg-zinc-950 group-hover:text-[#c7a65e] transition-colors">
+														{booking.reference}
+													</span>
+													<span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-zinc-400">Haircut</span>
+												</div>
+
+												<span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[8.5px] sm:text-[9px] font-black tracking-widest uppercase shadow-2xs ${
+													isApproved 
+														? 'bg-[#f7edd8] text-[#846018] border border-[#e8d2a3]' 
+														: 'bg-zinc-100 text-zinc-600 border border-zinc-200/80'
+												}`}>
+													<span className={`h-1.5 w-1.5 rounded-full ${isApproved ? 'bg-[#c7a65e] animate-pulse' : 'bg-zinc-400'}`} />
+													{booking.status}
+												</span>
 											</div>
-											<span className={`rounded-full px-2.5 py-1 text-[8px] font-bold uppercase tracking-wider ${booking.status === 'Approved' ? 'bg-[#f9f5ea] text-[#a37d2d]' : 'bg-zinc-100 text-zinc-500'}`}>
-												{booking.status}
-											</span>
-										</div>
-										<div className="mt-4 grid grid-cols-2 gap-3 text-[10px] text-zinc-500">
-											<p>
-												<span className="block text-[8px] font-semibold uppercase tracking-widest text-zinc-400">Date &amp; time</span>
-												<span className="mt-1 block font-medium text-zinc-700">{booking.date}<br />{booking.time}</span>
-											</p>
-											<p>
-												<span className="block text-[8px] font-semibold uppercase tracking-widest text-zinc-400">Barber</span>
-												<span className="mt-1 block font-medium capitalize text-zinc-700">{booking.barber}</span>
-											</p>
-										</div>
-									</article>
-								))}
+
+											{/* Service Name */}
+											<h3 className="mt-2 text-xs sm:text-sm font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#b68a36] transition-colors">
+												{booking.service}
+											</h3>
+
+											{/* Details Grid */}
+											<div className="mt-2 grid grid-cols-2 gap-2 rounded-xl bg-zinc-50/70 p-2 sm:p-2.5 border border-zinc-100 text-[10.5px] sm:text-[11px]">
+												<div className="flex items-start gap-1.5 sm:gap-2">
+													<div className="mt-0.5 flex h-5.5 w-5.5 sm:h-6 sm:w-6 shrink-0 items-center justify-center rounded-lg bg-white border border-zinc-200/60 text-[#c7a65e]">
+														<Calendar size={11} />
+													</div>
+													<div className="min-w-0">
+														<span className="block text-[8px] font-black tracking-wider text-zinc-400 uppercase">Schedule</span>
+														<p className="font-bold leading-tight text-zinc-800 truncate">{booking.date}</p>
+														<p className="text-[9.5px] font-semibold text-zinc-500">{booking.time}</p>
+													</div>
+												</div>
+
+												<div className="flex items-start gap-1.5 sm:gap-2 border-l border-zinc-200/60 pl-2 sm:pl-2.5">
+													<div className="mt-0.5 flex h-5.5 w-5.5 sm:h-6 sm:w-6 shrink-0 items-center justify-center rounded-lg bg-white border border-zinc-200/60 text-[#c7a65e]">
+														<UserCheck size={11} />
+													</div>
+													<div className="min-w-0">
+														<span className="block text-[8px] font-black tracking-wider text-zinc-400 uppercase">Stylist</span>
+														<p className="font-bold capitalize leading-tight text-zinc-800 truncate">{booking.barber}</p>
+														<p className="text-[9.5px] font-semibold text-zinc-400 uppercase">Barber</p>
+													</div>
+												</div>
+											</div>
+										</article>
+									);
+								})}
 							</div>
 						</section>
+
 					</div>
 				</div>
 			</div>
