@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import type { JSX } from 'react';
 import { ArrowRight, Check, LoaderCircle } from 'lucide-react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/footer';
 
-// For landding pages components
+// For landing pages components
 import { Hero } from './landing/hero';
 import { Barber } from './landing/Barber';
 import { Products } from './landing/Products';
@@ -17,37 +18,41 @@ import ForgotPassword from './auth/ForgotPassword';
 import ResetOtp from './auth/ResetOtp';
 import ResetPassword from './auth/ResetPassword';
 
-// for  client sections
+// For client sections
 import ClientDashboard from './client/ClientDashboard';
 import ClientAppointments from './client/ClientAppointments';
 import ClientBookingHistory from './client/ClientBookingHistory';
+import ClientMembershipPlan from './client/ClientMembershipPlan';
 
-// for  owner 
+// For owner 
 import OwnerDashboard from './owner/OwnerDashboard'; 
 
-
-// for staff  
+// For staff  
 import StaffDashboard from './staff/StaffDashboard';
 
+// Mapping para sa mga route hash papunta sa view name
+const HASH_VIEW_MAP: Record<string, string> = {
+  '#login': 'login',
+  '#register': 'register',
+  '#forgot-password': 'forgot-password',
+  '#reset-otp': 'reset-otp',
+  '#reset-password': 'reset-password',
+  '#client': 'client',
+  '#client-appointments': 'client-appointments',
+  '#client-history': 'client-history',
+  '#client-membership': 'client-membership',
+  '#owner': 'owner',
+  '#staff': 'staff',
+};
 
-const getCurrentView = () => {
-  if (window.location.hash === '#login') return 'login';
-  if (window.location.hash === '#register') return 'register';
-  if (window.location.hash === '#forgot-password') return 'forgot-password';
-  if (window.location.hash === '#reset-otp') return 'reset-otp';
-  if (window.location.hash === '#reset-password') return 'reset-password';
-  if (window.location.hash === '#client') return 'client';
-  if (window.location.hash === '#client-appointments') return 'client-appointments';
-  if (window.location.hash === '#client-history') return 'client-history';
-  if (window.location.hash === '#owner') return 'owner';
-  if (window.location.hash === '#staff') return 'staff';
-  return 'home';
+const getCurrentView = (): string => {
+  return HASH_VIEW_MAP[window.location.hash] || 'home';
 };
 
 function App() {
-  const [currentView, setCurrentView] = useState(getCurrentView);
-  const [isNavigating, setIsNavigating] = useState(false);
-  const [nextView, setNextView] = useState(getCurrentView);
+  const [currentView, setCurrentView] = useState<string>(getCurrentView);
+  const [isNavigating, setIsNavigating] = useState<boolean>(false);
+  const [nextView, setNextView] = useState<string>(getCurrentView);
   const navigationTimeout = useRef<number | undefined>(undefined);
 
   useEffect(() => {
@@ -108,44 +113,27 @@ function App() {
     );
   }
 
-  if (currentView === 'login') {
-    return <Login />;
-  }
+  // Kinuha ang username mula sa sessionStorage para sa mga client components
+  const clientUsername = window.sessionStorage.getItem('clientUsername') ?? 'verified client';
 
-  if (currentView === 'register') {
-    return <Register />;
-  }
+  // Component Mapping para sa malinis na pag-render
+  const viewsMap: Record<string, JSX.Element> = {
+    'login': <Login />,
+    'register': <Register />,
+    'forgot-password': <ForgotPassword />,
+    'reset-otp': <ResetOtp />,
+    'reset-password': <ResetPassword />,
+    'client': <ClientDashboard username={clientUsername} />,
+    'client-appointments': <ClientAppointments username={clientUsername} />,
+    'client-history': <ClientBookingHistory username={clientUsername} />,
+    'client-membership': <ClientMembershipPlan username={clientUsername} />,
+    'owner': <OwnerDashboard />,
+    'staff': <StaffDashboard />,
+  };
 
-  if (currentView === 'forgot-password') {
-    return <ForgotPassword />;
-  }
-
-  if (currentView === 'reset-otp') {
-    return <ResetOtp />;
-  }
-
-  if (currentView === 'reset-password') {
-    return <ResetPassword />;
-  }
-
-  if (currentView === 'client') {
-    return <ClientDashboard username={window.sessionStorage.getItem('clientUsername') ?? 'verified client'} />;
-  }
-
-  if (currentView === 'client-appointments') {
-    return <ClientAppointments username={window.sessionStorage.getItem('clientUsername') ?? 'verified client'} />;
-  }
-
-  if (currentView === 'client-history') {
-    return <ClientBookingHistory username={window.sessionStorage.getItem('clientUsername') ?? 'verified client'} />;
-  }
-
-  if (currentView === 'owner') {
-    return <OwnerDashboard />;
-  }
-
-  if (currentView === 'staff') {
-    return <StaffDashboard />;
+  // Kung ang currentView ay nasa map, ito ang ire-render. Kung wala (hal. 'home'), ang lalabas ay ang landing page.
+  if (viewsMap[currentView]) {
+    return viewsMap[currentView];
   }
 
   return (

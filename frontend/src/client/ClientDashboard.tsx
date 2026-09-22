@@ -1,75 +1,24 @@
+import ClientSidebar from '../components/sidebars/ClientSidebar';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowRight,
   Bell,
-  CalendarCheck2,
   CalendarDays,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
-  HelpCircle,
-  LayoutDashboard,
   LogOut,
   Menu,
   Plus,
-  ReceiptText,
   Scissors,
   Settings,
-  ShoppingBag,
-  Sparkles,
   User,
-  X,
 } from 'lucide-react';
 import { authApi } from '../auth/api';
 
 type ClientDashboardProps = {
   username: string;
 };
-
-type MenuItemProps = {
-  icon: typeof LayoutDashboard;
-  label: string;
-  active?: boolean;
-  onClick?: () => void;
-};
-
-// 🌟 2026 UI/UX Modernized Menu Item
-function MenuItem({ icon: Icon, label, active = false, onClick }: MenuItemProps) {
-  return (
-    <div className="px-3.5 mb-1">
-      <button
-        type="button"
-        onClick={onClick}
-        className={`group relative flex w-full items-center gap-3.5 rounded-xl px-3.5 py-2.5 text-left text-[10.5px] font-bold tracking-[0.16em] uppercase transition-all duration-200 ${
-          active
-            ? 'bg-[#faf8f4] text-zinc-900 border border-[#e8ded0] shadow-[0_2px_10px_-2px_rgba(199,166,94,0.12)]'
-            : 'border border-transparent text-zinc-400 hover:bg-zinc-100/60 hover:text-zinc-800 hover:translate-x-0.5'
-        }`}
-      >
-        {active && (
-          <span className="absolute left-1.5 top-1/2 -translate-y-1/2 h-4 w-1 rounded-full bg-[#c7a65e]" />
-        )}
-        <Icon
-          size={16}
-          strokeWidth={active ? 2.2 : 1.75}
-          className={`transition-colors duration-200 ${
-            active ? 'text-[#b08b3a] ml-1' : 'text-zinc-400 group-hover:text-zinc-700'
-          }`}
-        />
-        <span>{label}</span>
-      </button>
-    </div>
-  );
-}
-
-// 🌟 Ultra-Clean Section Label
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="px-7 pt-5 pb-2 text-[9px] font-extrabold tracking-[0.25em] text-zinc-400/80 uppercase">
-      {children}
-    </p>
-  );
-}
 
 export default function ClientDashboard({ username }: ClientDashboardProps) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -144,69 +93,11 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
   };
 
   // 🌟 Pro-Designer Modern Sidebar Structure
-  const sidebar = (
-    <aside className="flex h-full w-72 flex-col border-r border-zinc-200/70 bg-white/95 backdrop-blur-xl shadow-[6px_0_30px_rgba(0,0,0,0.02)]">
-      {/* Brand Header */}
-      <div className="flex h-20 items-center justify-between px-7 border-b border-zinc-100/60">
-        <button
-          type="button"
-          onClick={() => {
-            closeAllDropdowns();
-          }}
-          className="group rounded-xl p-1 transition-all duration-300 hover:bg-zinc-50 active:scale-95"
-          aria-label="Hustle Friends home"
-        >
-          <img
-            src="/img/HustleLogoBlack.png"
-            alt="Hustle Friends"
-            className="h-14 w-auto max-w-47.5 object-contain transition-transform duration-300 group-hover:scale-[1.03] sm:h-16 sm:max-w-55 lg:h-14 lg:max-w-47.5"
-          />
-        </button>
-        <button
-          type="button"
-          onClick={() => setIsSidebarOpen(false)}
-          className="rounded-xl p-2 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition lg:hidden"
-          aria-label="Close navigation"
-        >
-          <X size={18} />
-        </button>
-      </div>
 
-      {/* Navigation Items */}
-      <nav className="flex-1 overflow-y-auto py-3">
-        <SectionLabel>Main menu</SectionLabel>
-        <MenuItem icon={LayoutDashboard} label="Overview" active onClick={() => showNotice('You are already viewing your overview.')} />
-        <MenuItem icon={Scissors} label="Appointments" onClick={() => { window.location.hash = '#client-appointments'; }} />
-        <MenuItem icon={CalendarCheck2} label="Booking history" onClick={() => { window.location.hash = '#client-history'; }} />
-        <MenuItem icon={ShoppingBag} label="Membership plan" onClick={() => showNotice('Your Standard membership is active.')} />
-
-        <SectionLabel>Finance &amp; lifestyle</SectionLabel>
-        <MenuItem icon={ReceiptText} label="Transactions" onClick={() => showNotice('No transactions to display.')} />
-        <MenuItem icon={Sparkles} label="Lookbook" onClick={() => showNotice('The lookbook is coming soon.')} />
-
-        <SectionLabel>Support</SectionLabel>
-        <MenuItem icon={HelpCircle} label="Help & Support" onClick={() => showNotice('Support center coming soon.')} />
-      </nav>
-
-      {/* Modern Sidebar Bottom Member Card */}
-      <div className="border-t border-zinc-100 p-4">
-        <div className="flex items-center gap-3 rounded-2xl bg-zinc-50/80 border border-zinc-200/60 p-3 transition-colors hover:bg-zinc-100/60">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-950 text-xs font-black text-[#c7a65e] shadow-sm">
-            {userInitial}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="truncate text-xs font-black uppercase text-zinc-900 tracking-tight">{memberName}</p>
-            <p className="text-[9px] font-bold text-[#b08b3a] tracking-widest uppercase">Standard Member</p>
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-
-  return (
+	return (
     <main className="min-h-screen bg-[#f7f7f7] font-sans text-zinc-950 selection:bg-[#c7a65e] selection:text-white">
       {/* Desktop Persistent Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-40 hidden lg:block">{sidebar}</div>
+      <div className="fixed inset-y-0 left-0 z-40 hidden lg:block"><ClientSidebar username={username} active="overview" onNavigate={(route) => { window.location.hash = route; }} onClose={() => setIsSidebarOpen(false)} onNotice={showNotice} /></div>
 
       {/* Mobile Drawer Navigation */}
       {isSidebarOpen && (
@@ -217,7 +108,7 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
             onClick={() => setIsSidebarOpen(false)} 
             aria-label="Close navigation overlay" 
           />
-          <div className="relative h-full w-72">{sidebar}</div>
+          <div className="relative h-full w-72"><ClientSidebar username={username} active="overview" onNavigate={(route) => { window.location.hash = route; }} onClose={() => setIsSidebarOpen(false)} onNotice={showNotice} /></div>
         </div>
       )}
 
