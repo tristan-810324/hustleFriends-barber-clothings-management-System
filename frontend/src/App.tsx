@@ -23,6 +23,8 @@ import ClientDashboard from './client/ClientDashboard';
 import ClientAppointments from './client/ClientAppointments';
 import ClientBookingHistory from './client/ClientBookingHistory';
 import ClientMembershipPlan from './client/ClientMembershipPlan';
+import ClientTransactions from './client/ClientTransactions';
+import ClientNotifications from './client/ClientNotifications';
 
 // For owner 
 import OwnerDashboard from './owner/OwnerDashboard'; 
@@ -41,6 +43,8 @@ const HASH_VIEW_MAP: Record<string, string> = {
   '#client-appointments': 'client-appointments',
   '#client-history': 'client-history',
   '#client-membership': 'client-membership',
+  '#client-transactions': 'client-transactions',
+  '#client-notifications': 'client-notifications',
   '#owner': 'owner',
   '#staff': 'staff',
 };
@@ -127,6 +131,8 @@ function App() {
     'client-appointments': <ClientAppointments username={clientUsername} />,
     'client-history': <ClientBookingHistory username={clientUsername} />,
     'client-membership': <ClientMembershipPlan username={clientUsername} />,
+    'client-transactions': <ClientTransactions username={clientUsername} />,
+    'client-notifications': <ClientNotifications username={clientUsername} />,
     'owner': <OwnerDashboard />,
     'staff': <StaffDashboard />,
   };

@@ -1,4 +1,5 @@
 import {
+  Bell,
   CalendarCheck2,
   HelpCircle,
   LayoutDashboard,
@@ -13,11 +14,13 @@ export type ClientRoute =
   | '#client'
   | '#client-appointments'
   | '#client-history'
-  | '#client-membership';
+  | '#client-membership'
+  | '#client-transactions'
+  | '#client-notifications';
 
 type Props = {
   username: string;
-  active: 'overview' | 'appointments' | 'history' | 'membership';
+  active: 'overview' | 'appointments' | 'history' | 'membership' | 'transactions' | 'notifications';
   onNavigate: (route: ClientRoute) => void;
   onClose: () => void;
   onNotice?: (message: string) => void;
@@ -77,6 +80,13 @@ export default function ClientSidebar({
   const name = username.trim() || 'Member';
   const initial = name.charAt(0).toUpperCase() || 'M';
   const notice = (s: string) => onNotice?.(s);
+  const navigateTo = (route: ClientRoute) => {
+    onNavigate(route);
+    if (window.location.hash !== route) {
+      window.location.hash = route;
+    }
+    onClose();
+  };
 
   return (
     <aside className="flex h-full w-72 flex-col border-r border-zinc-200/70 bg-white/95 backdrop-blur-xl shadow-[6px_0_30px_rgba(0,0,0,0.02)]">
@@ -107,44 +117,52 @@ export default function ClientSidebar({
       </div>
 
       <nav className="flex-1 overflow-y-auto py-3">
-        <SectionLabel text="Main menu" />
+        <SectionLabel text="Menu features" />
         <MenuItem
           active={active === 'overview'}
           Icon={LayoutDashboard}
           label="Overview"
-          onClick={() => onNavigate('#client')}
+          onClick={() => navigateTo('#client')}
         />
         <MenuItem
           active={active === 'appointments'}
           Icon={Scissors}
           label="Appointments"
-          onClick={() => onNavigate('#client-appointments')}
+          onClick={() => navigateTo('#client-appointments')}
         />
-        <MenuItem
-          active={active === 'history'}
-          Icon={CalendarCheck2}
-          label="Booking history"
-          onClick={() => onNavigate('#client-history')}
-        />
+        
         <MenuItem
           active={active === 'membership'}
           Icon={ShoppingBag}
           label="Membership plan"
-          onClick={() => onNavigate('#client-membership')}
+          onClick={() => navigateTo('#client-membership')}
         />
-
-        <SectionLabel text="Finance & lifestyle" />
-        <MenuItem
-          active={false}
-          Icon={ReceiptText}
-          label="Transactions"
-          onClick={active === 'overview' ? () => notice('No transactions to display.') : undefined}
-        />
-        <MenuItem
+          <MenuItem
           active={false}
           Icon={Sparkles}
           label="Lookbook"
           onClick={active === 'overview' ? () => notice('The lookbook is coming soon.') : undefined}
+        />
+          <MenuItem
+            active={active === 'notifications'}
+            Icon={Bell}
+            label="Notifications"
+            onClick={() => navigateTo('#client-notifications')}
+          />
+
+
+        <SectionLabel text="Finance & lifestyle" />
+        <MenuItem
+          active={active === 'transactions'}
+          Icon={ReceiptText}
+          label="Transactions"
+          onClick={() => navigateTo('#client-transactions')}
+        />
+         <MenuItem
+          active={active === 'history'}
+          Icon={CalendarCheck2}
+          label="Booking history"
+          onClick={() => navigateTo('#client-history')}
         />
 
         <SectionLabel text="Support" />

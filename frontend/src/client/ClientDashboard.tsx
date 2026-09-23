@@ -92,7 +92,7 @@ export default function ClientDashboard({ username }: ClientDashboardProps) {
     closeAllDropdowns();
   };
 
-  // 🌟 Pro-Designer Modern Sidebar Structure
+  // Pro-Designer Modern Sidebar Structure
 
 	return (
     <main className="min-h-screen bg-[#f7f7f7] font-sans text-zinc-950 selection:bg-[#c7a65e] selection:text-white">
