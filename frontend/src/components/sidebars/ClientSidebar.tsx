@@ -16,11 +16,13 @@ export type ClientRoute =
   | '#client-history'
   | '#client-membership'
   | '#client-transactions'
-  | '#client-notifications';
+  | '#client-notifications'
+  | '#client-lookbook'
+  | '#client-support';
 
 type Props = {
   username: string;
-  active: 'overview' | 'appointments' | 'history' | 'membership' | 'transactions' | 'notifications';
+  active: 'overview' | 'appointments' | 'history' | 'membership' | 'transactions' | 'notifications' | 'lookbook' | 'support';
   onNavigate: (route: ClientRoute) => void;
   onClose: () => void;
   onNotice?: (message: string) => void;
@@ -74,12 +76,10 @@ export default function ClientSidebar({
   active,
   onNavigate,
   onClose,
-  onNotice,
   membershipLabel = 'Standard Member',
 }: Props) {
   const name = username.trim() || 'Member';
   const initial = name.charAt(0).toUpperCase() || 'M';
-  const notice = (s: string) => onNotice?.(s);
   const navigateTo = (route: ClientRoute) => {
     onNavigate(route);
     if (window.location.hash !== route) {
@@ -138,10 +138,10 @@ export default function ClientSidebar({
           onClick={() => navigateTo('#client-membership')}
         />
           <MenuItem
-          active={false}
+            active={active === 'lookbook'}
           Icon={Sparkles}
           label="Lookbook"
-          onClick={active === 'overview' ? () => notice('The lookbook is coming soon.') : undefined}
+            onClick={() => navigateTo('#client-lookbook')}
         />
           <MenuItem
             active={active === 'notifications'}
@@ -167,10 +167,10 @@ export default function ClientSidebar({
 
         <SectionLabel text="Support" />
         <MenuItem
-          active={false}
+          active={active === 'support'}
           Icon={HelpCircle}
           label="Help & Support"
-          onClick={active === 'overview' ? () => notice('Support center coming soon.') : undefined}
+          onClick={() => navigateTo('#client-support')}
         />
       </nav>
 
