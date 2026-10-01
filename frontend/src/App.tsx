@@ -4,21 +4,18 @@ import { ArrowRight, Check, LoaderCircle } from 'lucide-react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/footer';
 
-// For landing pages components
 import { Hero } from './landing/hero';
 import { Barber } from './landing/Barber';
 import { Products } from './landing/Products';
 import { Coffee } from './landing/Coffee';
 import { Contact } from './landing/Contact';
 
-// For auth components
 import Login from './auth/Login';
 import Register from './auth/Register';
 import ForgotPassword from './auth/ForgotPassword';
 import ResetOtp from './auth/ResetOtp';
 import ResetPassword from './auth/ResetPassword';
 
-// For client sections
 import ClientDashboard from './client/ClientDashboard';
 import ClientAppointments from './client/ClientAppointments';
 import ClientBookingHistory from './client/ClientBookingHistory';
@@ -28,13 +25,14 @@ import ClientNotifications from './client/ClientNotifications';
 import ClientLookbook from './client/ClientLookbook';
 import ClientSupport from './client/ClientSupport';
 
-// For owner 
 import OwnerDashboard from './owner/OwnerDashboard'; 
 
-// For staff  
 import StaffDashboard from './staff/StaffDashboard';
+import StaffBookings from './staff/StaffBookings';
+import StaffPos from './staff/StaffPos';
+import StaffInventory from './staff/StaffInventory';
+import StaffPaymentHistory from './staff/StaffPaymentHistory';
 
-// Mapping para sa mga route hash papunta sa view name
 const HASH_VIEW_MAP: Record<string, string> = {
   '#login': 'login',
   '#register': 'register',
@@ -51,6 +49,10 @@ const HASH_VIEW_MAP: Record<string, string> = {
   '#client-support': 'client-support',
   '#owner': 'owner',
   '#staff': 'staff',
+  '#staff-bookings': 'staff-bookings',
+  '#staff-pos': 'staff-pos',
+  '#staff-inventory': 'staff-inventory',
+  '#staff-payment-history': 'staff-payment-history',
 };
 
 const getCurrentView = (): string => {
@@ -67,7 +69,8 @@ function App() {
     const handleHashChange = () => {
       const upcomingView = getCurrentView();
 
-      if (!['owner', 'staff'].includes(upcomingView)) {
+      // Dito idinagdag ang 'staff-payment-history' para hindi mag-redirect sa home/login
+      if (!['owner', 'staff', 'staff-bookings', 'staff-pos', 'staff-inventory', 'staff-payment-history'].includes(upcomingView)) {
         setCurrentView(upcomingView);
         return;
       }
@@ -95,7 +98,7 @@ function App() {
   }, []);
 
   if (isNavigating) {
-    const destination = nextView === 'owner' ? 'Owner workspace' : nextView === 'staff' ? 'Staff workspace' : 'Client dashboard';
+    const destination = nextView === 'owner' ? 'Owner workspace' : nextView.startsWith('staff') ? 'Staff workspace' : 'Client dashboard';
 
     return (
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-neutral-950 px-6 text-white selection:bg-[#C6A664] selection:text-neutral-950">
@@ -121,10 +124,8 @@ function App() {
     );
   }
 
-  // Kinuha ang username mula sa sessionStorage para sa mga client components
   const clientUsername = window.sessionStorage.getItem('clientUsername') ?? 'verified client';
 
-  // Component Mapping para sa malinis na pag-render
   const viewsMap: Record<string, JSX.Element> = {
     'login': <Login />,
     'register': <Register />,
@@ -141,9 +142,12 @@ function App() {
     'client-support': <ClientSupport username={clientUsername} />,
     'owner': <OwnerDashboard />,
     'staff': <StaffDashboard />,
+    'staff-bookings': <StaffBookings />,
+    'staff-pos': <StaffPos />,
+    'staff-inventory': <StaffInventory />,
+    'staff-payment-history': <StaffPaymentHistory />,
   };
 
-  // Kung ang currentView ay nasa map, ito ang ire-render. Kung wala (hal. 'home'), ang lalabas ay ang landing page.
   if (viewsMap[currentView]) {
     return viewsMap[currentView];
   }

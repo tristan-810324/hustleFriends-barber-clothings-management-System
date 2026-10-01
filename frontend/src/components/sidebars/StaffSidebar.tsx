@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   Bell,
   Boxes,
@@ -59,6 +60,18 @@ const SectionLabel = ({ text }: { text: string }) => (
 
 export default function StaffSidebar({ onClose, onNotice }: Props) {
   const n = (s: string) => () => onNotice(s);
+  const [currentPath, setCurrentPath] = useState(window.location.hash || '#staff');
+
+  useEffect(() => {
+    const updatePath = () => setCurrentPath(window.location.hash || '#staff');
+    window.addEventListener('hashchange', updatePath);
+    return () => window.removeEventListener('hashchange', updatePath);
+  }, []);
+
+  const goTo = (path: string) => () => {
+    window.location.hash = path;
+    onClose();
+  };
 
   return (
     <aside className="flex h-full w-72 flex-col border-r border-zinc-200/70 bg-white/95 backdrop-blur-xl shadow-[6px_0_30px_rgba(0,0,0,0.02)]">
@@ -88,36 +101,36 @@ export default function StaffSidebar({ onClose, onNotice }: Props) {
       <nav className="flex-1 overflow-y-auto py-3" aria-label="Staff navigation">
         <SectionLabel text="Staff menu" />
         <MenuItem
-          active={true}
+          active={currentPath === '#staff'}
           Icon={LayoutDashboard}
           label="Staff Home"
-          onClick={n('You are viewing the staff overview.')}
+          onClick={goTo('#staff')}
         />
         <MenuItem
-          active={false}
+          active={currentPath === '#staff-bookings'}
           Icon={CalendarDays}
           label="Manage Bookings"
-          onClick={n('Booking management coming soon.')}
+          onClick={goTo('#staff-bookings')}
         />
         <MenuItem
-          active={false}
+          active={currentPath === '#staff-pos'}
           Icon={WalletCards}
           label="Walk-in Payment"
-          onClick={n('Walk-in payment system coming soon.')}
+          onClick={goTo('#staff-pos')}
         />
         <MenuItem
-          active={false}
+          active={currentPath === '#staff-inventory'}
           Icon={Boxes}
           label="Inventory"
-          onClick={n('Inventory module coming soon.')}
+          onClick={goTo('#staff-inventory')}
         />
 
         <SectionLabel text="Sales & reports" />
         <MenuItem
-          active={false}
+          active={currentPath === '#staff-payment-history'}
           Icon={FileText}
           label="Payment History"
-          onClick={n('Payment history coming soon.')}
+          onClick={goTo('#staff-payment-history')}
         />
 
         <SectionLabel text="System" />

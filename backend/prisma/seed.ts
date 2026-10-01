@@ -2,10 +2,11 @@ import { PrismaClient, Role } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
+const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
 
 async function main() {
-  const ownerPassword = await bcrypt.hash(process.env.SEED_OWNER_PASSWORD ?? 'Admin123!', 12);
-  const staffPassword = await bcrypt.hash(process.env.SEED_STAFF_PASSWORD ?? 'Admin123!', 12);
+  const ownerPassword = await bcrypt.hash(env?.SEED_OWNER_PASSWORD ?? 'Admin123', 12);
+  const staffPassword = await bcrypt.hash(env?.SEED_STAFF_PASSWORD ?? 'Admin123', 12);
 
   const owner = await prisma.user.upsert({
     where: { email: 'owner@hustlefriends.com' },
@@ -23,5 +24,5 @@ async function main() {
 }
 
 main()
-  .catch((error) => { console.error('Seeding failed:', error); process.exitCode = 1; })
+  .catch((error) => { console.error('Seeding failed:', error); })
   .finally(() => prisma.$disconnect());
