@@ -32,6 +32,9 @@ import StaffBookings from './staff/StaffBookings';
 import StaffPos from './staff/StaffPos';
 import StaffInventory from './staff/StaffInventory';
 import StaffPaymentHistory from './staff/StaffPaymentHistory';
+import StaffNotifications from './staff/StaffNotifications';
+import StaffMessages from './staff/StaffMessages';
+import StaffSupport from './staff/StaffSupport';
 
 const HASH_VIEW_MAP: Record<string, string> = {
   '#login': 'login',
@@ -39,6 +42,7 @@ const HASH_VIEW_MAP: Record<string, string> = {
   '#forgot-password': 'forgot-password',
   '#reset-otp': 'reset-otp',
   '#reset-password': 'reset-password',
+  // Client views
   '#client': 'client',
   '#client-appointments': 'client-appointments',
   '#client-history': 'client-history',
@@ -47,12 +51,17 @@ const HASH_VIEW_MAP: Record<string, string> = {
   '#client-notifications': 'client-notifications',
   '#client-lookbook': 'client-lookbook',
   '#client-support': 'client-support',
+  // Owner views
   '#owner': 'owner',
+  // Staff views
   '#staff': 'staff',
   '#staff-bookings': 'staff-bookings',
   '#staff-pos': 'staff-pos',
   '#staff-inventory': 'staff-inventory',
   '#staff-payment-history': 'staff-payment-history',
+  '#staff-notifications': 'staff-notifications',
+  '#staff-messages': 'staff-messages',
+  '#staff-support': 'staff-support',
 };
 
 const getCurrentView = (): string => {
@@ -69,8 +78,7 @@ function App() {
     const handleHashChange = () => {
       const upcomingView = getCurrentView();
 
-      // Dito idinagdag ang 'staff-payment-history' para hindi mag-redirect sa home/login
-      if (!['owner', 'staff', 'staff-bookings', 'staff-pos', 'staff-inventory', 'staff-payment-history'].includes(upcomingView)) {
+      if (!['owner', 'staff', 'staff-bookings', 'staff-pos', 'staff-inventory', 'staff-payment-history', 'staff-notifications', 'staff-messages', 'staff-support'].includes(upcomingView)) {
         setCurrentView(upcomingView);
         return;
       }
@@ -146,6 +154,9 @@ function App() {
     'staff-pos': <StaffPos />,
     'staff-inventory': <StaffInventory />,
     'staff-payment-history': <StaffPaymentHistory />,
+    'staff-notifications': <StaffNotifications />,
+    'staff-messages': <StaffMessages />,
+    'staff-support': <StaffSupport />,
   };
 
   if (viewsMap[currentView]) {

@@ -1,61 +1,59 @@
 import StaffSidebar from '../components/sidebars/StaffSidebar';
 import {
   Bell,
-  CheckCircle2,
   ChevronDown,
   LogOut,
   Menu,
   Plus,
+  Search,
+  Send,
   Settings,
-   Trash2,
   User,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { authApi } from '../auth/api';
 
-const initialNotifications = [
+const initialConversations = [
   {
     id: 1,
-    title: 'New Booking Confirmed',
-    message: 'Client Justine Soliman booked a Haircut & Beard Trim service for tomorrow at 2:00 PM.',
-    time: '10 mins ago',
+    name: 'Justine Soliman',
+    role: 'VIP Client',
+    lastMessage: 'Good afternoon! Pwede bang i-reschedule yung appointment ko bukas?',
+    time: '02:45 PM',
     unread: true,
-    type: 'booking',
   },
   {
     id: 2,
-    title: 'Low Inventory Alert',
-    message: 'Pomade Matte Finish stock is currently running low (Only 3 pieces left in inventory).',
-    time: '1 hour ago',
-    unread: true,
-    type: 'inventory',
+    name: 'Tristan Bautista',
+    role: 'Regular Client',
+    lastMessage: 'Sige po, salamat sa mabilis na assist sa Walk-in POS payment kanina.',
+    time: '11:20 AM',
+    unread: false,
   },
   {
     id: 3,
-    title: 'Payment Received',
-    message: 'Walk-in payment amounting to ₱650.00 successfully processed via POS terminal.',
-    time: '3 hours ago',
-    unread: false,
-    type: 'payment',
-  },
-  {
-    id: 4,
-    title: 'System Announcement',
-    message: 'Scheduled maintenance update for Hustle Friends terminal will occur this midnight.',
+    name: 'Angieee Tigasin',
+    role: 'VIP Client',
+    lastMessage: 'Available po ba yung Matte Pomade stock ninyo ngayon?',
     time: 'Yesterday',
     unread: false,
-    type: 'system',
   },
 ];
 
-export default function StaffNotifications() {
+export default function StaffMessages() {
   const [error, setError] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotifMenuOpen, setIsNotifMenuOpen] = useState(false);
   const [notice, setNotice] = useState('');
-  const [notifications, setNotifications] = useState(initialNotifications);
+  
+  const [conversations] = useState(initialConversations);
+  const [activeChat, setActiveChat] = useState(initialConversations[0]);
+  const [messageInput, setMessageInput] = useState('');
+  const [chatMessages, setChatMessages] = useState([
+    { sender: 'client', text: 'Good afternoon! Pwede bang i-reschedule yung appointment ko bukas?', time: '02:45 PM' }
+  ]);
 
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -115,17 +113,17 @@ export default function StaffNotifications() {
     closeAllDropdowns();
   };
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, unread: false })));
-    showNotice('All notifications marked as read.');
-  };
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!messageInput.trim()) return;
 
-  const clearNotifications = () => {
-    setNotifications([]);
-    showNotice('Notifications cleared.');
+    setChatMessages([
+      ...chatMessages,
+      { sender: 'staff', text: messageInput, time: 'Just now' }
+    ]);
+    setMessageInput('');
+    showNotice('Message sent successfully.');
   };
-
-  const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
     <main className="min-h-screen w-full bg-[#f7f7f7] font-sans text-zinc-950 selection:bg-[#c7a65e] selection:text-white">
@@ -206,7 +204,7 @@ export default function StaffNotifications() {
                       isNotifMenuOpen ? 'text-[#c7a65e]' : 'text-zinc-700 group-hover:text-zinc-950'
                     }`}
                   />
-                  {unreadCount > 0 && <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[#c7a65e] ring-2 ring-white animate-pulse" />}
+                  <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[#c7a65e] ring-2 ring-white animate-pulse" />
                 </div>
                 <span
                   className={`flex h-4.5 min-w-4.5 items-center justify-center rounded-lg px-1.5 text-[9px] font-black tracking-tight transition-colors ${
@@ -215,7 +213,7 @@ export default function StaffNotifications() {
                       : 'bg-white border border-zinc-200/60 text-zinc-800 shadow-2xs group-hover:border-[#c7a65e]/30'
                   }`}
                 >
-                  {unreadCount}
+                  3
                 </span>
               </button>
 
@@ -223,7 +221,7 @@ export default function StaffNotifications() {
                 <div className="absolute right-0 mt-3 w-72 sm:w-80 rounded-2xl border border-zinc-100 bg-white shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2">
                   <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3">
                     <p className="text-[10px] font-black tracking-[0.15em] text-zinc-900 uppercase">Notifications</p>
-                    <button type="button" onClick={markAllAsRead} className="text-[9px] font-bold text-[#c7a65e] uppercase transition hover:text-[#a37d2d]">Mark as read</button>
+                    <button type="button" onClick={() => setIsNotifMenuOpen(false)} className="text-[9px] font-bold text-[#c7a65e] uppercase transition hover:text-[#a37d2d]">Mark as read</button>
                   </div>
                   <div className="flex flex-col items-center justify-center px-6 py-8 text-center">
                     <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-50 text-zinc-300">
@@ -303,102 +301,123 @@ export default function StaffNotifications() {
           </div>
         </header>
 
-        {/* Staff Notifications Main Content */}
+        {/* Staff Messages Main Content */}
         <div className="mx-auto max-w-[1570px] px-3.5 py-4 sm:px-6 sm:py-8 lg:px-10 xl:px-12">
           {error && <p className="mb-4 sm:mb-6 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium text-red-700" role="alert">{error}</p>}
           {notice && <p className="mb-4 sm:mb-6 rounded-xl border border-[#dfcfaa] bg-[#fdf9ef] px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium text-[#735719]" role="status">{notice}</p>}
 
-          {/* Title Header */}
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <div className="inline-flex items-center gap-1.5 rounded-full border border-[#e7dcc5] bg-[#f9f5ea] px-2.5 py-1 text-[8px] sm:text-[9px] font-black tracking-[0.24em] text-[#bb9143] uppercase">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#c7a65e]" />
-                System Alerts
+                Client Communication
               </div>
               <h1 className="mt-2 text-3xl font-black leading-tight tracking-[-0.06em] uppercase sm:mt-3 sm:text-4xl lg:text-5xl">
-                Staff <span className="text-zinc-400 italic">Notifications</span>
+                Staff <span className="text-zinc-400 italic">Messages</span>
               </h1>
-            </div>
-
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={markAllAsRead}
-                className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-black tracking-wider text-zinc-800 uppercase shadow-xs transition hover:border-[#c7a65e] hover:bg-zinc-50 active:scale-95"
-              >
-                <CheckCircle2 size={16} className="text-[#c7a65e]" />
-                <span>Mark all as read</span>
-              </button>
-              <button
-                type="button"
-                onClick={clearNotifications}
-                className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-black tracking-wider text-red-600 uppercase shadow-xs transition hover:border-red-300 hover:bg-red-50 active:scale-95"
-              >
-                <Trash2 size={16} />
-                <span>Clear all</span>
-              </button>
             </div>
           </div>
 
-          {/* Notifications List Section */}
-          <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-            <div className="border-b border-zinc-200 px-5 py-5 sm:px-8 sm:py-6 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-black tracking-[-0.065em] uppercase sm:text-xl">Inbox Alerts</h2>
-                <p className="mt-1 text-xs text-zinc-500">Real-time terminal updates and notifications</p>
+          {/* Messages Layout Grid */}
+          <div className="mt-6 grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
+            {/* Conversations List Sidebar */}
+            <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm flex flex-col">
+              <div className="border-b border-zinc-200 px-5 py-4">
+                <h2 className="text-sm font-black tracking-wider uppercase text-zinc-900">Conversations</h2>
               </div>
-              <div className="text-xs font-bold text-zinc-400 uppercase">
-                Unread: <span className="text-zinc-900 font-black">{unreadCount} items</span>
+              <div className="p-3">
+                <div className="relative">
+                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+                  <input
+                    type="text"
+                    placeholder="Search client..."
+                    className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 py-2.5 pl-10 pr-4 text-xs font-bold text-zinc-800 placeholder:text-zinc-400 focus:border-[#c7a65e] focus:bg-white focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="divide-y divide-zinc-100 overflow-y-auto max-h-125">
+                {conversations.map((conv) => (
+                  <button
+                    key={conv.id}
+                    type="button"
+                    onClick={() => setActiveChat(conv)}
+                    className={`w-full flex items-start gap-3 p-4 text-left transition-colors hover:bg-zinc-50 ${
+                      activeChat.id === conv.id ? 'bg-[#fdf9ef]/70 border-l-4 border-[#c7a65e]' : ''
+                    }`}
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-950 text-xs font-black text-[#c7a65e]">
+                      {conv.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-black text-zinc-900 uppercase truncate">{conv.name}</p>
+                        <span className="text-[10px] text-zinc-400 whitespace-nowrap">{conv.time}</span>
+                      </div>
+                      <p className="mt-0.5 text-[10px] font-bold text-[#c7a65e] uppercase">{conv.role}</p>
+                      <p className="mt-1 text-xs text-zinc-500 truncate">{conv.lastMessage}</p>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="divide-y divide-zinc-100">
-              {notifications.length === 0 ? (
-                <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-50 text-zinc-300">
-                    <Bell size={24} strokeWidth={2} />
+            {/* Chat Box Panel */}
+            <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm flex flex-col h-150">
+              {/* Chat Header */}
+              <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4 bg-zinc-50/50">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-950 text-xs font-black text-[#c7a65e]">
+                    {activeChat.name.charAt(0)}
                   </div>
-                  <p className="text-xs font-black tracking-wide text-zinc-700 uppercase">No notifications found</p>
-                  <p className="mt-1 text-xs text-zinc-500">You have cleared all your system messages.</p>
+                  <div>
+                    <h3 className="text-sm font-black text-zinc-900 uppercase tracking-tight">{activeChat.name}</h3>
+                    <p className="text-[10px] font-bold text-[#c7a65e] uppercase">{activeChat.role}</p>
+                  </div>
                 </div>
-              ) : (
-                notifications.map((item) => (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[9px] font-black tracking-wider text-emerald-700 uppercase">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Active now
+                </span>
+              </div>
+
+              {/* Chat Messages Body */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#fbfbfb]">
+                {chatMessages.map((msg, index) => (
                   <div
-                    key={item.id}
-                    className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:px-8 transition-colors hover:bg-zinc-50/80 ${
-                      item.unread ? 'bg-[#fdf9ef]/40' : ''
-                    }`}
+                    key={index}
+                    className={`flex flex-col ${msg.sender === 'staff' ? 'items-end' : 'items-start'}`}
                   >
-                    <div className="flex items-start gap-4">
-                      <div className={`mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
-                        item.unread ? 'border-[#dfcfaa] bg-[#fdf9ef] text-[#c7a65e]' : 'border-zinc-200 bg-zinc-100 text-zinc-500'
-                      }`}>
-                        <Bell size={18} strokeWidth={2} />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-black text-zinc-900 uppercase tracking-tight">{item.title}</h3>
-                          {item.unread && <span className="h-2 w-2 rounded-full bg-[#c7a65e]" />}
-                        </div>
-                        <p className="mt-1 text-xs text-zinc-600 leading-relaxed">{item.message}</p>
-                        <span className="mt-2 inline-block text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{item.time}</span>
-                      </div>
+                    <div
+                      className={`max-w-md rounded-2xl px-4 py-3 text-xs leading-relaxed shadow-xs ${
+                        msg.sender === 'staff'
+                          ? 'bg-zinc-950 text-white rounded-br-2xs'
+                          : 'bg-white border border-zinc-200 text-zinc-800 rounded-bl-2xs'
+                      }`}
+                    >
+                      <p>{msg.text}</p>
                     </div>
-                    <div className="flex items-center gap-2 sm:self-center">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setNotifications(notifications.map((n) => (n.id === item.id ? { ...n, unread: false } : n)));
-                          showNotice(`Notification marked as read.`);
-                        }}
-                        className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-[10px] font-black tracking-wider text-zinc-700 uppercase transition hover:border-[#c7a65e] hover:bg-zinc-50 active:scale-95"
-                      >
-                        Mark Read
-                      </button>
-                    </div>
+                    <span className="mt-1 text-[9px] text-zinc-400 uppercase tracking-wider">{msg.time}</span>
                   </div>
-                ))
-              )}
+                ))}
+              </div>
+
+              {/* Chat Footer Input */}
+              <form onSubmit={handleSendMessage} className="border-t border-zinc-200 p-4 bg-white flex items-center gap-3">
+                <input
+                  type="text"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  placeholder="Type your message here..."
+                  className="flex-1 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-xs font-bold text-zinc-800 placeholder:text-zinc-400 focus:border-[#c7a65e] focus:bg-white focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 py-3 text-xs font-black tracking-wider text-white uppercase shadow-sm transition hover:bg-[#c7a65e] active:scale-95"
+                >
+                  <Send size={15} />
+                  <span>Send</span>
+                </button>
+              </form>
             </div>
           </div>
         </div>

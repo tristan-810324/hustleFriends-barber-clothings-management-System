@@ -135,24 +135,24 @@ export default function StaffSidebar({ onClose, onNotice }: Props) {
 
         <SectionLabel text="System" />
         <MenuItem
-          active={false}
+          active={currentPath === '#staff-notifications'}
           Icon={Bell}
           label="Notifications"
-          onClick={n('System notifications coming soon.')}
+          onClick={goTo('#staff-notifications')}
         />
         <MenuItem
-          active={false}
+          active={currentPath === '#staff-messages'}
           Icon={Mail}
           label="Messages"
-          onClick={n('Messaging system coming soon.')}
+          onClick={goTo('#staff-messages')}
         />
 
         <SectionLabel text="Support" />
         <MenuItem
-          active={false}
+          active={currentPath === '#staff-support'}
           Icon={HelpCircle}
           label="Help & Support"
-          onClick={n('Support center coming soon.')}
+          onClick={goTo('#staff-support')}
         />
       </nav>
 
