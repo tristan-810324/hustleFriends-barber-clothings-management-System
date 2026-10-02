@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bell, Menu, User, Settings, LogOut, ChevronDown, PackagePlus, Upload, Check } from 'lucide-react';
+import { Bell, Menu, User, Settings, LogOut, ChevronDown, PackagePlus, Upload } from 'lucide-react';
 import OwnerSidebar from '../components/sidebars/OwnerSidebar';
 import { authApi } from '../auth/api';
 
