@@ -58,7 +58,7 @@ const SectionLabel = ({ text }: { text: string }) => (
   </p>
 );
 
-export default function StaffSidebar({ onClose, onNotice }: Props) {
+export default function StaffSidebar({ onClose }: Props) {
   const [currentPath, setCurrentPath] = useState(window.location.hash || '#staff');
 
   useEffect(() => {
