@@ -30,6 +30,11 @@ import OwnerManagement from './owner/OwnerManagement';
 import OwnerStats from './owner/OwnerStats';
 import OwnerNotifications from './owner/OwnerNotifications';
 import OwnerAddItems from './owner/OwnerAddItems';
+import OwnerViewStocks from './owner/OwnerViewStocks';
+import OwnerPaymentHistory from './owner/OwnerPaymentHistory';
+import OwnerBookingHistory from './owner/OwnerBookingHistory';
+import OwnerMembership from './owner/OwnerMembership';
+import OwnerMessages from './owner/OwnerMessages';
 
 import StaffDashboard from './staff/StaffDashboard';
 import StaffBookings from './staff/StaffBookings';
@@ -62,6 +67,11 @@ const HASH_VIEW_MAP: Record<string, string> = {
   '#owner-stats': 'owner-stats',
   '#owner-notifications': 'owner-notifications',
   '#owner-add-items': 'owner-add-items',
+  '#owner-inventory': 'owner-inventory',
+  '#owner-payments': 'owner-payments',
+  '#owner-bookings': 'owner-bookings',
+  '#owner-membership': 'owner-membership',
+  '#owner-messages': 'owner-messages',
   // Staff views
   '#staff': 'staff',
   '#staff-bookings': 'staff-bookings',
@@ -87,7 +97,7 @@ function App() {
     const handleHashChange = () => {
       const upcomingView = getCurrentView();
 
-      if (!['owner', 'owner-management', 'owner-stats', 'owner-notifications', 'owner-add-items', 'staff', 'staff-bookings', 'staff-pos', 'staff-inventory', 'staff-payment-history', 'staff-notifications', 'staff-messages', 'staff-support'].includes(upcomingView)) {
+      if (!['owner', 'owner-management', 'owner-stats', 'owner-notifications', 'owner-add-items', 'owner-inventory', 'owner-payments', 'owner-bookings', 'owner-membership', 'owner-messages', 'staff', 'staff-bookings', 'staff-pos', 'staff-inventory', 'staff-payment-history', 'staff-notifications', 'staff-messages', 'staff-support'].includes(upcomingView)) {
         setCurrentView(upcomingView);
         return;
       }
@@ -162,6 +172,11 @@ function App() {
     'owner-management': <OwnerManagement />,
     'owner-notifications': <OwnerNotifications />,
     'owner-add-items': <OwnerAddItems />,
+    'owner-inventory': <OwnerViewStocks />,
+    'owner-payments': <OwnerPaymentHistory />,
+    'owner-bookings': <OwnerBookingHistory />,
+    'owner-membership': <OwnerMembership />,
+    'owner-messages': <OwnerMessages />,
     'staff': <StaffDashboard />,
     'staff-bookings': <StaffBookings />,
     'staff-pos': <StaffPos />,

@@ -87,14 +87,14 @@ export default function OwnerSidebar({ onClose, onNotice }: Props) {
 
         <SectionLabel text="Operations" />
         <MenuItem active={currentPath === '#owner-add-items'} icon={PackagePlus} label="Add items" onClick={goTo('#owner-add-items', true)} />
-        <MenuItem active={currentPath === '#owner-inventory'} icon={ClipboardList} label="Inventory / stocks" onClick={goTo('#owner-inventory')} />
-        <MenuItem active={currentPath === '#owner-payments'} icon={WalletCards} label="Payment history" onClick={goTo('#owner-payments')} />
-        <MenuItem active={currentPath === '#owner-bookings'} icon={CalendarDays} label="Booking history" onClick={goTo('#owner-bookings')} />
+        <MenuItem active={currentPath === '#owner-inventory'} icon={ClipboardList} label="Inventory / stocks" onClick={goTo('#owner-inventory', true)} />
+        <MenuItem active={currentPath === '#owner-payments'} icon={WalletCards} label="Payment history" onClick={goTo('#owner-payments', true)} />
+        <MenuItem active={currentPath === '#owner-bookings'} icon={CalendarDays} label="Booking history" onClick={goTo('#owner-bookings', true)} />
 
         <SectionLabel text="Management" />
-        <MenuItem active={currentPath === '#owner-membership'} icon={Settings} label="Edit membership plan" onClick={goTo('#owner-membership')} />
+        <MenuItem active={currentPath === '#owner-membership'} icon={Settings} label="Edit membership plan" onClick={goTo('#owner-membership', true)} />
         <MenuItem active={currentPath === '#owner-management'} icon={Users} label="Staff management" onClick={goTo('#owner-management', true)} />
-        <MenuItem active={currentPath === '#owner-messages'} icon={Mail} label="Messages" onClick={goTo('#owner-messages')} />
+        <MenuItem active={currentPath === '#owner-messages'} icon={Mail} label="Messages" onClick={goTo('#owner-messages', true)} />
       </nav>
 
       <div className="border-t border-zinc-100 p-4">
