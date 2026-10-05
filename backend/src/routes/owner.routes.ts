@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { Prisma } from '@prisma/client';
 import { ZodError } from 'zod';
-import { authMiddleware, roleMiddleware } from './auth.middleware.js';
-import * as ownerService from './owner.service.js';
-import { createStaffSchema, resetStaffPasswordSchema } from './validators.js';
+import { authMiddleware, roleMiddleware } from '../middleware/auth.middleware.js';
+import * as ownerService from '../services/owner.service.js';
+import { createStaffSchema, resetStaffPasswordSchema } from '../validators/index.js';
 
 export const ownerRouter = Router();
 ownerRouter.use(authMiddleware, roleMiddleware('OWNER'));

@@ -1,8 +1,8 @@
 import nodemailer from 'nodemailer';
 import { fileURLToPath } from 'node:url';
-import { config, isProduction } from './config.js';
+import { config, isProduction } from '../config/index.js';
 
-const logoPath = fileURLToPath(new URL('../../frontend/public/img/HustleLogoBlack.png', import.meta.url));
+const logoPath = fileURLToPath(new URL('../../../frontend/public/img/HustleLogoBlack.png', import.meta.url));
 const logoContentId = 'hustle-friends-logo';
 
 const transporter = config.SMTP_HOST && config.SMTP_USER && config.SMTP_PASS

@@ -1,6 +1,6 @@
 import { Role } from '@prisma/client';
-import { prisma } from './database.js';
-import { hashSecret } from './security.js';
+import { prisma } from '../config/database.js';
+import { hashSecret } from '../utils/security.js';
 import { issueVerificationOtp } from './auth.service.js';
 
 const staffFields = {

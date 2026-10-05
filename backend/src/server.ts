@@ -3,9 +3,9 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import { config } from './config.js';
-import { authRouter } from './auth.routes.js';
-import { ownerRouter } from './owner.routes.js';
+import { config } from './config/index.js';
+import { authRouter } from './routes/auth.routes.js';
+import { ownerRouter } from './routes/owner.routes.js';
 
 const app = express();
 app.disable('x-powered-by');

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { prisma } from './database.js';
-import { verifyAuthToken, type AuthClaims } from './security.js';
+import { prisma } from '../config/database.js';
+import { verifyAuthToken, type AuthClaims } from '../utils/security.js';
 
 declare global {
   namespace Express {

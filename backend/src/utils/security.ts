@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import jwt from 'jsonwebtoken';
-import { config } from './config.js';
+import { config } from '../config/index.js';
 
 export type AuthClaims = { userId: string; role: 'CLIENT' | 'STAFF' | 'OWNER' };
 

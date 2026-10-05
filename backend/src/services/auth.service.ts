@@ -1,8 +1,8 @@
 import { OtpPurpose, Prisma } from '@prisma/client';
-import { prisma } from './database.js';
-import { isProduction } from './config.js';
-import { sendCodeEmail } from './mail.js';
-import { compareSecret, createOtp, createToken, hashSecret, hashToken, signAuthToken } from './security.js';
+import { prisma } from '../config/database.js';
+import { isProduction } from '../config/index.js';
+import { sendCodeEmail } from '../utils/mail.js';
+import { compareSecret, createOtp, createToken, hashSecret, hashToken, signAuthToken } from '../utils/security.js';
 
 type AuthErrorCode = 'INVALID_CREDENTIALS' | 'ACCOUNT_EXISTS' | 'UNVERIFIED' | 'INACTIVE' | 'INVALID_OTP' | 'OTP_EXPIRED' | 'OTP_ATTEMPTS' | 'RESET_EXPIRED' | 'RESET_ACCOUNT_NOT_FOUND';
 export class AuthError extends Error {

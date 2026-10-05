@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { OtpPurpose } from '@prisma/client';
 import { ZodError } from 'zod';
-import { cookieOptions, resetCookieOptions } from './config.js';
-import * as authService from './auth.service.js';
-import { authMiddleware } from './auth.middleware.js';
-import { emailSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyOtpSchema } from './validators.js';
+import { cookieOptions, resetCookieOptions } from '../config/index.js';
+import * as authService from '../services/auth.service.js';
+import { authMiddleware } from '../middleware/auth.middleware.js';
+import { emailSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyOtpSchema } from '../validators/index.js';
 
 export const authRouter = Router();
 const parse = <T>(schema: { parse: (value: unknown) => T }, value: unknown) => schema.parse(value);
