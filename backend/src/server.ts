@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import { config } from './config/index.js';
 import { authRouter } from './routes/auth.routes.js';
 import { ownerRouter } from './routes/owner.routes.js';
+import { messagesRouter } from './routes/messages.routes.js';
 
 const app = express();
 app.disable('x-powered-by');
@@ -24,6 +25,7 @@ app.use(express.json({ limit: '20kb' }));
 app.use(cookieParser());
 app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 50, standardHeaders: true, legacyHeaders: false }), authRouter);
 app.use('/api/owner', ownerRouter);
+app.use('/api/messages', messagesRouter);
 app.get('/health', (_request, response) => response.json({ status: 'ok' }));
 app.use((_request, response) => response.status(404).json({ error: 'Not found' }));
 app.use((error: unknown, _request: express.Request, response: express.Response, _next: express.NextFunction) => {

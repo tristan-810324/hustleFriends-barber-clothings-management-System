@@ -2,6 +2,17 @@ type Role = 'CLIENT' | 'STAFF' | 'OWNER';
 type SafeUser = { id: string; email: string; fullName: string; role: Role };
 type ApiResponse<T> = { data?: T; error?: string };
 export type StaffMember = { id: string; fullName: string; email: string; role: 'STAFF'; isActive: boolean; createdAt: string };
+export type StaffMessage = {
+	id: string;
+	name: string;
+	phone: string | null;
+	email: string;
+	subject: string;
+	message: string;
+	isRead: boolean;
+	createdAt: string;
+	replies: { id: string; message: string; createdAt: string }[];
+};
 import { getAuthErrorMessage } from './authMessages';
 
 const apiBaseUrl = import.meta.env.VITE_API_URL || '';
@@ -40,5 +51,11 @@ export const authApi = {
 	},
 	listStaff: () => request<{ staff: StaffMember[] }>('/api/owner/staff'),
 	createStaff: (body: { fullName: string; email: string; password: string }) => request<{ data: StaffMember }>('/api/owner/staff', requestWithBody('POST', body)),
-	resetStaffPassword: (id: string, newPassword: string) => request<{ message: string }>(`/api/owner/staff/${id}/reset-password`, requestWithBody('PATCH', { newPassword }))
+	resetStaffPassword: (id: string, newPassword: string) => request<{ message: string }>(`/api/owner/staff/${id}/reset-password`, requestWithBody('PATCH', { newPassword })),
+	sendStaffMessage: (body: { name: string; phone?: string; email: string; subject: string; message: string }) =>
+		request<{ message: { id: string } }>('/api/messages', requestWithBody('POST', body)),
+	listStaffMessages: () => request<{ messages: StaffMessage[] }>('/api/messages/staff')
+	,
+	replyToStaffMessage: (id: string, message: string) =>
+		request<{ reply: StaffMessage['replies'][number] }>(`/api/messages/staff/${id}/replies`, requestWithBody('POST', { message }))
 };

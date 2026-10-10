@@ -11,11 +11,27 @@ import {
   User,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { authApi } from '../auth/api';
+import { authApi, type StaffMessage } from '../auth/api';
 
-const initialConversations = [
+interface Conversation {
+  id: string;
+  name: string;
+  role: string;
+  lastMessage: string;
+  time: string;
+  unread: boolean;
+  email?: string;
+}
+
+interface ChatMessage {
+  sender: 'client' | 'staff';
+  text: string;
+  time: string;
+}
+
+const initialConversations: Conversation[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Justine Soliman',
     role: 'VIP Client',
     lastMessage: 'Good afternoon! Pwede bang i-reschedule yung appointment ko bukas?',
@@ -23,7 +39,7 @@ const initialConversations = [
     unread: true,
   },
   {
-    id: 2,
+    id: '2',
     name: 'Tristan Bautista',
     role: 'Regular Client',
     lastMessage: 'Sige po, salamat sa mabilis na assist sa Walk-in POS payment kanina.',
@@ -31,7 +47,7 @@ const initialConversations = [
     unread: false,
   },
   {
-    id: 3,
+    id: '3',
     name: 'Angieee Tigasin',
     role: 'VIP Client',
     lastMessage: 'Available po ba yung Matte Pomade stock ninyo ngayon?',
@@ -39,6 +55,21 @@ const initialConversations = [
     unread: false,
   },
 ];
+
+function toChatMessages(inquiry: StaffMessage): ChatMessage[] {
+  return [
+    {
+      sender: 'client',
+      text: `${inquiry.subject}: ${inquiry.message}`,
+      time: new Date(inquiry.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    },
+    ...inquiry.replies.map((reply) => ({
+      sender: 'staff' as const,
+      text: reply.message,
+      time: new Date(reply.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    })),
+  ];
+}
 
 export default function StaffMessages() {
   const [error, setError] = useState('');
@@ -48,18 +79,53 @@ export default function StaffMessages() {
   const [isNotifMenuOpen, setIsNotifMenuOpen] = useState(false);
   const [notice, setNotice] = useState('');
   
-  const [conversations] = useState(initialConversations);
+  const [conversations, setConversations] = useState(initialConversations);
   const [activeChat, setActiveChat] = useState(initialConversations[0]);
   const [messageInput, setMessageInput] = useState('');
-  const [chatMessages, setChatMessages] = useState([
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { sender: 'client', text: 'Good afternoon! Pwede bang i-reschedule yung appointment ko bukas?', time: '02:45 PM' }
   ]);
+  const [staffMessages, setStaffMessages] = useState<StaffMessage[]>([]);
+  const [isSending, setIsSending] = useState(false);
 
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
   const memberName = 'Staff Member';
   const userInitial = 'S';
+
+  useEffect(() => {
+    const loadStaffMessages = async () => {
+      try {
+        const response = await authApi.listStaffMessages();
+        if (!response.messages.length) return;
+
+        const contactMessages = response.messages.map((item: StaffMessage) => ({
+          id: item.id,
+          name: item.name,
+          email: item.email,
+          role: 'Website Contact',
+          lastMessage: item.message,
+          time: new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          unread: !item.isRead,
+        }));
+        setConversations(contactMessages);
+        setActiveChat(contactMessages[0]);
+        setStaffMessages(response.messages);
+        setChatMessages(toChatMessages(response.messages[0]));
+      } catch (loadError) {
+        setError(loadError instanceof Error ? loadError.message : 'Unable to load messages.');
+      }
+    };
+
+    void loadStaffMessages();
+  }, []);
+
+  const selectConversation = (conversation: Conversation) => {
+    setActiveChat(conversation);
+    const selectedMessage = staffMessages.find((item) => item.id === conversation.id);
+    if (selectedMessage) setChatMessages(toChatMessages(selectedMessage));
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -113,16 +179,41 @@ export default function StaffMessages() {
     closeAllDropdowns();
   };
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!messageInput.trim()) return;
+    if (!messageInput.trim() || isSending) return;
 
-    setChatMessages([
-      ...chatMessages,
-      { sender: 'staff', text: messageInput, time: 'Just now' }
-    ]);
-    setMessageInput('');
-    showNotice('Message sent successfully.');
+    if (!staffMessages.length) {
+      setChatMessages([
+        ...chatMessages,
+        { sender: 'staff', text: messageInput, time: 'Just now' }
+      ]);
+      setMessageInput('');
+      showNotice('Message sent successfully.');
+      return;
+    }
+
+    setIsSending(true);
+    try {
+      const response = await authApi.replyToStaffMessage(activeChat.id, messageInput.trim());
+      setChatMessages((previous) => [
+        ...previous,
+        {
+          sender: 'staff',
+          text: response.reply.message,
+          time: new Date(response.reply.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
+      setStaffMessages((previous) => previous.map((item) => (
+        item.id === activeChat.id ? { ...item, replies: [...item.replies, response.reply] } : item
+      )));
+      setMessageInput('');
+      showNotice('Reply sent to the client email successfully.');
+    } catch (sendError) {
+      setError(sendError instanceof Error ? sendError.message : 'Unable to send reply.');
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -340,7 +431,7 @@ export default function StaffMessages() {
                   <button
                     key={conv.id}
                     type="button"
-                    onClick={() => setActiveChat(conv)}
+                    onClick={() => selectConversation(conv)}
                     className={`w-full flex items-start gap-3 p-4 text-left transition-colors hover:bg-zinc-50 ${
                       activeChat.id === conv.id ? 'bg-[#fdf9ef]/70 border-l-4 border-[#c7a65e]' : ''
                     }`}
@@ -412,7 +503,8 @@ export default function StaffMessages() {
                 />
                 <button
                   type="submit"
-                  className="flex items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 py-3 text-xs font-black tracking-wider text-white uppercase shadow-sm transition hover:bg-[#c7a65e] active:scale-95"
+                  disabled={isSending || !activeChat.email}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 py-3 text-xs font-black tracking-wider text-white uppercase shadow-sm transition hover:bg-[#c7a65e] active:scale-95 disabled:cursor-wait disabled:opacity-60"
                 >
                   <Send size={15} />
                   <span>Send</span>

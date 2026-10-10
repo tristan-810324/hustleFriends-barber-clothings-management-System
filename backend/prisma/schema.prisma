@@ -30,6 +30,31 @@ model User {
   @@index([isVerified, isActive])
 }
 
+model StaffMessage {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String?
+  email     String
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  replies   StaffMessageReply[]
+
+  @@index([isRead, createdAt])
+}
+
+model StaffMessageReply {
+  id            String       @id @default(uuid())
+  message       String
+  createdAt     DateTime     @default(now())
+  staffMessageId String
+  staffMessage  StaffMessage @relation(fields: [staffMessageId], references: [id], onDelete: Cascade)
+
+  @@index([staffMessageId, createdAt])
+}
+
 model Otp {
   id        String   @id @default(uuid())
   codeHash  String

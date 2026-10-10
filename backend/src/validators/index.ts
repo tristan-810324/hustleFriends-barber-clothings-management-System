@@ -21,3 +21,13 @@ export const createStaffSchema = z.object({
   password
 }).strict();
 export const resetStaffPasswordSchema = z.object({ newPassword: password }).strict();
+export const createStaffMessageSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  phone: z.string().trim().max(30).optional(),
+  email,
+  subject: z.string().trim().min(1).max(100),
+  message: z.string().trim().min(1).max(5000)
+}).strict();
+export const createStaffMessageReplySchema = z.object({
+  message: z.string().trim().min(1).max(5000)
+}).strict();

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Phone, MapPin, Share2, ExternalLink, Navigation } from 'lucide-react';
 import { Reveal } from '../components/effects/Reveal';
+import { authApi } from '../auth/api';
 
 export const Contact = () => {
   const [formData, setFormData] = useState({
@@ -10,10 +11,20 @@ export const Contact = () => {
     subject: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Message sent:', formData);
+    setIsSubmitting(true);
+    try {
+      await authApi.sendStaffMessage(formData);
+      setFormData({ name: '', phone: '', email: '', subject: '', message: '' });
+      window.alert('Your message has been sent successfully.');
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : 'Unable to send your message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -119,6 +130,7 @@ export const Contact = () => {
             {/* Submit Button */}
             <button
               type="submit"
+              disabled={isSubmitting}
               className="w-full mt-4 py-3.5 rounded-xl bg-neutral-950 text-white font-black text-xs tracking-widest uppercase hover:bg-[#C6A664] hover:text-neutral-950 transition-all duration-300 shadow-xl active:scale-95"
             >
               SEND MESSAGE TO HUSTLE FRIENDS
